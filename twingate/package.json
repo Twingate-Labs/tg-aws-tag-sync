@@ -1,0 +1,18 @@
+{
+  "name": "twingate",
+  "version": "0.0.1",
+  "description": "twingate API in Lambda",
+  "main": "app.js",
+  "repository": "",
+  "author": "Twingate Lab",
+  "dependencies": {
+    "@aws-sdk/client-resource-groups-tagging-api": "^3.105.0",
+    "@aws-sdk/client-ssm": "^3.105.0",
+    "axios": ">=0.21.1",
+    "node-fetch": "^3.2.5"
+  },
+  "devDependencies": {
+    "chai": "^4.2.0",
+    "mocha": "^9.1.4"
+  }
+}
