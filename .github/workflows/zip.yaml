@@ -20,11 +20,14 @@ jobs:
         # - name: Test Deno
         #   run: deno run https://deno.land/std/examples/welcome.ts
 
-      - uses: actions/setup-node@v1
+      - name: Set up Node.js
+        uses: actions/setup-node@v1
         with:
-          node-version: 14
-      - run: cd twingate
-      - run: npm install
+          node-version: 14.x
+      - run: yarn install
+        working-directory: twingate
+      - run: yarn build
+        working-directory: twingate
 
       - name: Compress cli_linux_x86_64
         uses: papeloto/action-zip@v1
