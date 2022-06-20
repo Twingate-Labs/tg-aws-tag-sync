@@ -8,7 +8,7 @@ Download the latest ```Cloudformation.yaml``` and ```TgAwsTagWatchLmabda.zip``` 
 
 ## Upload Lambda Function To AWS S3 Bucket
 - Using an existing AWS S3 bucket or create a new one.
-- Upload ```TgAwsTagWatchLmabda.zip``` To the S3 Bucket
+- Upload ```TgAwsTagWatchLambda.zip``` To the S3 Bucket
 
 ## Create New CloudFormation Stack
 - Create a new CloudFormation Stack
