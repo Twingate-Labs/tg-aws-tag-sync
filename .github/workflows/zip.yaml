@@ -1,0 +1,43 @@
+name: Deno
+
+on:
+  push:
+    tags:
+      - v*.*.*
+  # push:
+  #   branches: [chenbishop-patch-1]
+
+jobs:
+  build_release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Setup repo
+        uses: actions/checkout@v1
+
+      - id: get_version
+        uses: battila7/get-version-action@v2
+
+        # - name: Test Deno
+        #   run: deno run https://deno.land/std/examples/welcome.ts
+
+      - name: Compress cli_linux_x86_64
+        uses: papeloto/action-zip@v1
+        with:
+          files: ./twingate/*
+          dest: ./tg_aws_tag_watch.zip
+
+      - name: Get release
+        id: get_release
+        uses: bruceadams/get-release@v1.2.3
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+
+      - name: Upload linux_x86_64
+        uses: actions/upload-release-asset@v1.0.2
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        with:
+          upload_url: ${{ steps.get_release.outputs.upload_url }}
+          asset_path: tg_aws_tag_watch.zip
+          asset_name: tg_aws_tag_watch.zip
+          asset_content_type: application/zip

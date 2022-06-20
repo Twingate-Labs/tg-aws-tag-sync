@@ -1,0 +1,88 @@
+AWSTemplateFormatVersion: 2010-09-09
+Parameters:
+  TwingateApiKey:
+    Type: String
+    Default: Insert Twingate API Key Here
+  TwingateNetworkAddress:
+    Type: String
+    Default: Insert Twingate Network Address Here
+  S3BucketName:
+    Type: String
+    Default: Insert S3 Bucket Name Here
+  S3LambdaKey:
+    Type: String
+    Default: Insert S3 Lambda Package Key
+Resources:
+  TwingateAPIKeyParamater:
+    Type: AWS::SSM::Parameter
+    Properties: 
+      Description: Twingate API Key
+      Name: TwingateApiKey
+      Type: String
+      Value: !Ref TwingateApiKey
+  TwingateNetworkAddressParamater:
+    Type: AWS::SSM::Parameter
+    Properties: 
+      Description: Twingate Network Address
+      Name: TwingateNetworkAddress
+      Type: String
+      Value: !Ref TwingateNetworkAddress
+  TwingateRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - lambda.amazonaws.com
+            Action:
+              - 'sts:AssumeRole'
+      Description: TwingateRole
+      Policies:
+        - PolicyName: EmbeddedInlinePolicy
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: Allow
+                Action: 'cloudformation:*'
+                Resource: '*'
+      ManagedPolicyArns: 
+        - arn:aws:iam::aws:policy/AmazonSSMFullAccess
+        - arn:aws:iam::aws:policy/ResourceGroupsandTagEditorFullAccess
+        - arn:aws:iam::aws:policy/AWSLambdaExecute
+        - arn:aws:iam::aws:policy/CloudWatchFullAccess
+      RoleName: TwingateRole  
+  LambdaFunction:
+    Type: AWS::Lambda::Function
+    Properties: 
+      Architectures: 
+        - x86_64
+      Code: 
+          S3Bucket: !Ref S3BucketName
+          S3Key: !Ref S3LambdaKey
+      Description: Lambda Function
+      FunctionName: TgFunction
+      Handler: app.handler
+      MemorySize: 128
+      PackageType: Zip
+      Role: !GetAtt "TwingateRole.Arn"
+      Runtime: nodejs14.x
+      Timeout: 60
+  ClouldWatchEventRule:
+    Type: AWS::Events::Rule
+    Properties: 
+      Description: Clould Watch Event Rule
+      EventPattern: {"source":["aws.tag"],"detail-type":["Tag Change on Resource"],"detail":{"service":["ec2"],"resource-type":["instance"],"changed-tag-keys":["tg_resource","tg_groups"]}}
+      Name: TwingateTagWatch
+      Targets: 
+        - Arn: !GetAtt "LambdaFunction.Arn"
+          Id: WhatIsThis
+  LambdaPermission:
+    Type: AWS::Lambda::Permission 
+    Properties:  
+      Action: lambda:InvokeFunction 
+      FunctionName: !Ref LambdaFunction 
+      Principal: events.amazonaws.com 
+      SourceArn: !GetAtt ClouldWatchEventRule.Arn 
