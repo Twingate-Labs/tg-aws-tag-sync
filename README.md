@@ -15,15 +15,17 @@ Download the latest ```Cloudformation.yaml``` and ```TgAwsTagWatchLmabda.zip``` 
 - Using ```Cloudformation.yaml``` as the template
 - Insert the following parameters
   - S3BucketName: The name of the S3 bucket, e.g. twingateTagWatchBucket
-  - S3LambdaKey: TgAwsTagWatchLmabda.zip unless the filename is changed
+  - S3LambdaKey: Default value TgAwsTagWatchLmabda.zip unless the filename is changed
   - TwingateApiKey: The Twingate API key
   - TwingateNetworkAddress: The Twingate network address, e.g. exampleAccount.twingate.com
 
 ## How To Use
 Tag an AWS resource with the following tags
 
-| Tag         | Input Format                                       | Functionality                                     | Output                                        |
+| Tag         | Input Format                                       | Twingate Action                                   | AWS Action                                    |
 |-------------|----------------------------------------------------|---------------------------------------------------|-----------------------------------------------|
 | tg_resource | RemoteNetworkNameOrId,ResourceName,ResourceAddress | Create the resource in the Twingate               | adding tg_resource_id to the AWS resource tag |
-| tg_groups   | GroupNameOrId1,GroupNameOrId2...                   | Add the defined groups into the Twingate resource | Null                                          |
+| tg_groups   | GroupNameOrId1,GroupNameOrId2...                   | Add the defined groups into the Twingate resource | None                                          |
 
+## Remove the Corresponding Twingate Resource
+Remove the AWS tag 'tg_resource_id' From the AWS Instance.
