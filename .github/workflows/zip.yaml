@@ -26,8 +26,6 @@ jobs:
           node-version: 14.x
       - run: yarn install
         working-directory: twingate
-      - run: yarn build
-        working-directory: twingate
 
       - name: Compress cli_linux_x86_64
         uses: papeloto/action-zip@v1
