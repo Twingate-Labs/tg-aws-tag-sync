@@ -85,11 +85,4 @@ Resources:
       Action: lambda:InvokeFunction 
       FunctionName: !Ref LambdaFunction 
       Principal: events.amazonaws.com 
-      SourceArn: !GetAtt ClouldWatchEventRule.Arn 
-
-
-
-
-
-
-      https://drive.google.com/u/0/uc?id=1id0d8or4s39kVZ06Z_gbno4DgUuTw7_F&export=download
+      SourceArn: !GetAtt ClouldWatchEventRule.Arn
