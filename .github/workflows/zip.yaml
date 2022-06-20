@@ -20,11 +20,21 @@ jobs:
         # - name: Test Deno
         #   run: deno run https://deno.land/std/examples/welcome.ts
 
+      - uses: actions/setup-node@v1
+        with:
+          node-version: 14
+      - run: cd twingate
+      - run: npm @aws-sdk/client-resource-groups-tagging-api
+      - run: npm @aws-sdk/client-ssm
+      - run: npm node-fetch
+      - run: cd ..
+
       - name: Compress cli_linux_x86_64
         uses: papeloto/action-zip@v1
         with:
           files: ./twingate/
           dest: ./tg_aws_tag_watch.zip
+
 
       - name: Get release
         id: get_release
