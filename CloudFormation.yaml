@@ -11,7 +11,7 @@ Parameters:
     Default: Insert S3 Bucket Name Here
   S3LambdaKey:
     Type: String
-    Default: Insert S3 Lambda Package Key
+    Default: TgAwsTagWatchLmabda.zip
 Resources:
   TwingateAPIKeyParamater:
     Type: AWS::SSM::Parameter

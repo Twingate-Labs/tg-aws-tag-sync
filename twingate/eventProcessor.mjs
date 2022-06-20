@@ -1,6 +1,6 @@
-const { listCommand, createResourceCommand, removeResourceCommand, addGroupToResource } = await import('./commands.mjs');
+const { listCommand, createResourceCommand, removeResourceCommand, addGroupToResourceCommand } = await import('./commands.mjs');
 import { SSMClient, GetParametersCommand } from "@aws-sdk/client-ssm";
-import {ResourceGroupsTaggingAPIClient, TagResourcesCommand} from "@aws-sdk/client-resource-groups-tagging-api";
+import {ResourceGroupsTaggingAPIClient, TagResourcesCommand, UntagResourcesCommand} from "@aws-sdk/client-resource-groups-tagging-api";
 
 const ssmClient = new SSMClient()
 const ssmInput = { "Names": ["TwingateApiKey", "TwingateNetworkAddress"] , "WithDecryption": true}
@@ -30,18 +30,17 @@ export async function eventProcessor(event) {
             let output = await createResourceCommand(networkAddress, apiKey, remoteNetworkName, resourceNameOrId, resourceAddress, null)
             resourceId = output.id
             //todo: handle multiple resources. create multiple resources and add groups to the resources
-            let resourceArn = event.resources
+            const resourceArn = event.resources
             const tagInput = {
                 "ResourceARNList": resourceArn,
                 "Tags": {
                     "tg_resource_id": resourceId,
                 }
             }
-
             const tagClient = new ResourceGroupsTaggingAPIClient()
             const tagCommand = new TagResourcesCommand(tagInput)
             const tagResponse = await tagClient.send(tagCommand);
-            console.log(tagResponse)
+            console.log(`Added Tag 'tg_resource_id' to AWS resource '${resourceArn}'`)
         } else {
             console.log("tg_resource tag is removed, nothing to do.")
         }
@@ -52,9 +51,26 @@ export async function eventProcessor(event) {
         if ("tg_groups" in event.detail.tags){
             resourceNameOrId =   event.detail.tags.tg_resource_id || resourceId
             let groupInfo = event.detail.tags.tg_groups.replace(/\s*,\s*/g, ",").split(",")
-            let output = await addGroupToResource(networkAddress, apiKey, resourceNameOrId, groupInfo)
+            let output = await addGroupToResourceCommand(networkAddress, apiKey, resourceNameOrId, groupInfo)
         } else{
             console.log("tg_groups tag is removed, nothing to do.")
+        }
+
+    }
+
+    if (event.detail["changed-tag-keys"].includes("tg_resource_id")){
+        if (!("tg_resource_id" in event.detail.tags)){
+            const resourceArn = event.resources
+            const tagInput = {
+                "ResourceARNList": resourceArn,
+                "TagKeys": ["tg_resource", "tg_groups"]
+            }
+            const tagClient = new ResourceGroupsTaggingAPIClient()
+            const tagCommand = new UntagResourcesCommand(tagInput)
+            const tagResponse = await tagClient.send(tagCommand)
+            let output = await removeResourceCommand(networkAddress, apiKey, resourceNameOrId)
+        } else{
+            console.log("tg_resource_id tag is added, nothing to do.")
         }
 
     }

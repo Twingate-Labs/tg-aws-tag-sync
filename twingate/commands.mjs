@@ -94,20 +94,24 @@ export async function createResourceCommand(networkName, apiKey, remoteNetworkNa
 
 
     let res = await client.createResource(resourceName, resourceAddress, remoteNetworkId, protocols, [])
-    console.log(`added resources: {remote network: ${remoteNetworkNameOrId}, resource name: ${resourceName}, resource address: ${resourceAddress}, resource id: ${res.id}}`)
+    console.log(`added resources: {'remote network': '${remoteNetworkNameOrId}', 'resource name': '${resourceName}', 'resource address': '${resourceAddress}', 'resource id': '${res.id}'}`)
 
     return res
 }
 
-export async function removeResourceCommand(networkName, apiKey, resourceId) {
+export async function removeResourceCommand(networkName, apiKey, resourceNameOrId) {
     let client = new TwingateApiClient(networkName, apiKey);
+    let resourceId = resourceNameOrId
+    if (!resourceId.startsWith(TwingateApiClient.IdPrefixes.Resource)){
+        resourceId = await client.lookupResourceByName(resourceNameOrId)
+    }
     let res = await client.removeResource(resourceId);
-    console.log(`removed resource with ID [${resourceId}]`)
+    console.log(`removed resource with ID '${resourceId}'`)
     return res
 }
 
 
-export async function addGroupToResource(networkName, apiKey, resourceNameOrId, groupNameOrId){
+export async function addGroupToResourceCommand(networkName, apiKey, resourceNameOrId, groupNameOrId){
     let client = new TwingateApiClient(networkName, apiKey);
 
     let resourceId = resourceNameOrId
@@ -133,6 +137,8 @@ export async function addGroupToResource(networkName, apiKey, resourceNameOrId, 
     }
 
     let res = await client.addGroupToResource(resourceId, groupIds)
-    console.log(`added groups with ID ${groupIds} to resource with ID ${resourceId}`)
+    console.log(`added groups with IDs '${groupIds}' to resource with ID '${resourceId}'`)
     return res
 }
+
+
