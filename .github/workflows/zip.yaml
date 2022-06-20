@@ -23,7 +23,7 @@ jobs:
       - name: Compress cli_linux_x86_64
         uses: papeloto/action-zip@v1
         with:
-          files: ./twingate/*
+          files: ./twingate/
           dest: ./tg_aws_tag_watch.zip
 
       - name: Get release
