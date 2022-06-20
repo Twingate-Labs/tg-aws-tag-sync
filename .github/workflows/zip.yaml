@@ -40,12 +40,32 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ github.token }}
 
-      - name: Upload linux_x86_64
+      - name: Upload TgAwsTagWatchLmabda
         uses: actions/upload-release-asset@v1.0.2
         env:
           GITHUB_TOKEN: ${{ github.token }}
         with:
           upload_url: ${{ steps.get_release.outputs.upload_url }}
-          asset_path: tg_aws_tag_watch.zip
-          asset_name: tg_aws_tag_watch.zip
+          asset_path: TgAwsTagWatchLmabda.zip
+          asset_name: TgAwsTagWatchLmabda.zip
           asset_content_type: application/zip
+
+      - name: Upload TgAwsTagWatchLmabda
+        uses: actions/upload-release-asset@v1.0.2
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        with:
+          upload_url: ${{ steps.get_release.outputs.upload_url }}
+          asset_path: TgAwsTagWatchLmabda.zip
+          asset_name: TgAwsTagWatchLmabda.zip
+          asset_content_type: application/zip
+
+      - name: Upload CloudFormation
+        uses: actions/upload-release-asset@v1.0.2
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        with:
+          upload_url: ${{ steps.get_release.outputs.upload_url }}
+          asset_path: CloudFormation.yaml
+          asset_name: CloudFormation.yaml
+          asset_content_type: application/x-yaml
