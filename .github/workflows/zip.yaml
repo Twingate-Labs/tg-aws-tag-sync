@@ -31,7 +31,7 @@ jobs:
         uses: papeloto/action-zip@v1
         with:
           files: ./twingate/
-          dest: ./tg_aws_tag_watch.zip
+          dest: ./TgAwsTagWatchLmabda.zip
 
 
       - name: Get release
@@ -39,16 +39,6 @@ jobs:
         uses: bruceadams/get-release@v1.2.3
         env:
           GITHUB_TOKEN: ${{ github.token }}
-
-      - name: Upload TgAwsTagWatchLmabda
-        uses: actions/upload-release-asset@v1.0.2
-        env:
-          GITHUB_TOKEN: ${{ github.token }}
-        with:
-          upload_url: ${{ steps.get_release.outputs.upload_url }}
-          asset_path: TgAwsTagWatchLmabda.zip
-          asset_name: TgAwsTagWatchLmabda.zip
-          asset_content_type: application/zip
 
       - name: Upload TgAwsTagWatchLmabda
         uses: actions/upload-release-asset@v1.0.2
