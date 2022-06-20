@@ -46,14 +46,16 @@ Resources:
             Version: "2012-10-17"
             Statement:
               - Effect: Allow
-                Action: 'cloudformation:*'
+                Action:
+                 - "ec2:DeleteTags"
+                 - "ec2:CreateTags"
                 Resource: '*'
       ManagedPolicyArns: 
         - arn:aws:iam::aws:policy/AmazonSSMReadOnlyAccess
         - arn:aws:iam::aws:policy/ResourceGroupsandTagEditorFullAccess
         - arn:aws:iam::aws:policy/AWSLambdaExecute
         - arn:aws:iam::aws:policy/CloudWatchLogsFullAccess
-      RoleName: TwingateRole  
+      RoleName: TwingateRole
   LambdaFunction:
     Type: AWS::Lambda::Function
     Properties: 
@@ -74,7 +76,7 @@ Resources:
     Type: AWS::Events::Rule
     Properties: 
       Description: Clould Watch Event Rule
-      EventPattern: {"source":["aws.tag"],"detail-type":["Tag Change on Resource"],"detail":{"service":["ec2"],"resource-type":["instance"],"changed-tag-keys":["tg_resource","tg_groups"]}}
+      EventPattern: {"source":["aws.tag"],"detail-type":["Tag Change on Resource"],"detail":{"service":["ec2"],"resource-type":["instance"],"changed-tag-keys":["tg_resource","tg_groups", "tg_resource_id"]}}
       Name: TwingateTagWatch
       Targets: 
         - Arn: !GetAtt "LambdaFunction.Arn"
