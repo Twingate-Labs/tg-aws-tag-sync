@@ -11,7 +11,7 @@ const apiKey =  ssmParameter.Parameters.find(x => x.Name === 'TwingateApiKey').V
 
 
 export async function eventProcessor(event) {
-    let [remoteNetworkName, resourceNameOrId, resourceAddress] = ["", "", ""]
+    let [remoteNetworkName, resourceNameOrId, resourceAddress, resourceId] = ["", "", "", ""]
 
     // process tg_resource tag
     if ("tg_resource" in event.detail.tags){
@@ -28,7 +28,7 @@ export async function eventProcessor(event) {
     if (event.detail["changed-tag-keys"].includes("tg_resource")){
         if ("tg_resource" in event.detail.tags){
             let output = await createResourceCommand(networkAddress, apiKey, remoteNetworkName, resourceNameOrId, resourceAddress, null)
-            let resourceId = output.id
+            resourceId = output.id
             //todo: handle multiple resources. create multiple resources and add groups to the resources
             let resourceArn = event.resources
             const tagInput = {
@@ -50,7 +50,7 @@ export async function eventProcessor(event) {
 
     if (event.detail["changed-tag-keys"].includes("tg_groups")){
         if ("tg_groups" in event.detail.tags){
-            resourceNameOrId =   event.detail.tags.tg_resource_id || resourceNameOrId
+            resourceNameOrId =   event.detail.tags.tg_resource_id || resourceId
             let groupInfo = event.detail.tags.tg_groups.replace(/\s*,\s*/g, ",").split(",")
             let output = await addGroupToResource(networkAddress, apiKey, resourceNameOrId, groupInfo)
         } else{

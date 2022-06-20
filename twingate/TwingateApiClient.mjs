@@ -23,7 +23,8 @@ export class TwingateApiClient {
         // Really not ideal since identifiers are meant to be opaque
         RemoteNetwork: "UmVtb3RlTmV0d29yazo",// btoa("RemoteNetwork:").replace(/=$/, ""),
         Group: "R3JvdXA6", // btoa("Group:").replace(/=$/, "")
-        Resource: "UmVzb3Vy"
+        Resource: "UmVzb3Vy",
+        User: "VXNlcjox"
     }
 
     static Schema = {
@@ -130,8 +131,7 @@ export class TwingateApiClient {
                 {name: "createdAt", type: "datetime"},
                 {name: "updatedAt", type: "datetime"},
                 {name: "lastHeartbeatAt", type: "datetime"},
-                {name: "state", type: "enum", typeName: "ConnectorState", valueMap: {"ALIVE": "Online", "DEAD_NO_HEARTBEAT": "Offline - No Heartbeat",
-                        "DEAD_HEARTBEAT_TOO_OLD": "Offline - Heartbeat too old", "DEAD_NO_RELAYS": "Offline - No relays"}},
+                {name: "state", type: "enum", typeName: "ConnectorState", valueMap: {"ALIVE": "Online", "DEAD_NO_HEARTBEAT": "Offline - No Heartbeat", "DEAD_HEARTBEAT_TOO_OLD": "Offline - Heartbeat too old", "DEAD_NO_RELAYS": "Offline - No relays"}},
                 {name: "remoteNetwork", type: "Node", typeName: "RemoteNetwork"}
             ]
         },
@@ -144,10 +144,8 @@ export class TwingateApiClient {
                 {name: "lastConnectedAt", type: "datetime"},
                 {name: "lastFailedLoginAt", type: "datetime"},
                 {name: "lastSuccessfulLoginAt", type: "datetime"},
-                {name: "deviceType", type: "enum", typeName: "DeviceType", valueMap: {"GENERIC": "Generic", "DESKTOP": "Desktop", "LAPTOP": "Laptop", "TABLET":
-                            "Tablet", "MOBILE": "Mobile"}},
-                {name: "osName", type: "enum", typeName: "DeviceOsName", valueMap: {"IOS": "iOS", "MAC_OS": "MacOS", "ANDROID": "Android", "CHROME_OS":
-                            "chromeOS", "WINDOWS": "Windows", "LINUX": "Linux"}},
+                {name: "deviceType", type: "enum", typeName: "DeviceType", valueMap: {"GENERIC": "Generic", "DESKTOP": "Desktop", "LAPTOP": "Laptop", "TABLET": "Tablet", "MOBILE": "Mobile"}},
+                {name: "osName", type: "enum", typeName: "DeviceOsName", valueMap: {"IOS": "iOS", "MAC_OS": "MacOS", "ANDROID": "Android", "CHROME_OS": "chromeOS", "WINDOWS": "Windows", "LINUX": "Linux"}},
                 {name: "osVersion", type: "string"},
                 {name: "clientVersion", type: "string"},
                 {name: "hardwareModel", type: "string"},
@@ -287,8 +285,7 @@ export class TwingateApiClient {
         const firstResults = pageSize>0 ? `first:${pageSize},` : "";
         fieldAlias = (fieldAlias != null && fieldAlias != field) ? `${fieldAlias}:` : "";
         if ( Array.isArray(nodeFields) ) nodeFields = nodeFields.join(" ");
-        return `query ${queryName}($endCursor:String){${fieldAlias}${field}(${firstResults}after:$endCursor){pageInfo{hasNextPage 
-endCursor}edges{node{${nodeFields}}}}}`;
+        return `query ${queryName}($endCursor:String){${fieldAlias}${field}(${firstResults}after:$endCursor){pageInfo{hasNextPage endCursor}edges{node{${nodeFields}}}}}`;
     }
 
     /**
@@ -306,9 +303,7 @@ endCursor}edges{node{${nodeFields}}}}}`;
         const firstResults = pageSize>0 ? `first:${pageSize},` : "";
         fieldAlias = (fieldAlias != null && fieldAlias != field) ? `${fieldAlias}:` : "";
         if ( Array.isArray(nodeFields) ) nodeFields = nodeFields.join(" ");
-        return `query 
-${queryName}($id:ID!,$endCursor:String!){${fieldAlias}${field}(id:$id){${connectionField}(${firstResults}after:$endCursor){pageInfo{hasNextPage 
-endCursor}edges{node{${nodeFields}}}}}}`;
+        return `query ${queryName}($id:ID!,$endCursor:String!){${fieldAlias}${field}(id:$id){${connectionField}(${firstResults}after:$endCursor){pageInfo{hasNextPage endCursor}edges{node{${nodeFields}}}}}}`;
     }
 
     /**
@@ -397,8 +392,7 @@ endCursor}edges{node{${nodeFields}}}}}}`;
                 }
             }
             if ( fieldOpts[connField].nodeQuery == null ) {
-                fieldOpts[connField].nodeQuery = this.getRootNodePagedQuery(nodeSchema.nodeQueryName, nodeSchema.queryNodeField, connField,
-                    fieldOpts[connField].nodeFields, "result", this.defaultPageSize);
+                fieldOpts[connField].nodeQuery = this.getRootNodePagedQuery(nodeSchema.nodeQueryName, nodeSchema.queryNodeField, connField, fieldOpts[connField].nodeFields, "result", this.defaultPageSize);
             }
             fieldOpts[connField].getResultObjFn = fieldOpts[connField].getResultObjFn || new Function("response", `return response.result.${connField}`);
         }
@@ -440,8 +434,7 @@ endCursor}edges{node{${nodeFields}}}}}}`;
         const recordTransformFn = nodeSchema.recordTransformFn;
         const recordTransformOpts = opts.recordTransformOpts || {};
         const nextPageFn = () => ({hasNextPage: false});
-        const pageTransformFn = (response, rtnVal, recordTransformFn, recordTransformOpts) => Object.assign(rtnVal, recordTransformFn(response.result,
-            recordTransformOpts));
+        const pageTransformFn = (response, rtnVal, recordTransformFn, recordTransformOpts) => Object.assign(rtnVal, recordTransformFn(response.result, recordTransformOpts));
         const query = this.getRootNodeQuery(`${nodeType}ById`, nodeSchema.queryNodeField, nodeFields, "result");
         let record = await this.fetchAllPages(query, {initialValue: {}, recordTransformFn, recordTransformOpts, nextPageFn, pageTransformFn, id});
         await this._processFetchConnections(nodeSchema, fieldOpts, record);
@@ -548,8 +541,7 @@ endCursor}edges{node{${nodeFields}}}}}}`;
         return fieldSchemaCtx.map(fieldDef => {
             switch (fieldDef.type) {
                 case "Object": return `${fieldDef.name}{${fieldDef.nodeFields||this._getFields(fieldDef.typeName, fieldDef.fieldSet, fieldDef.fieldOptions)}}`;
-                case "Node": return `${fieldDef.name}{${fieldDef.nodeFields||this._getFields(fieldDef.typeName, fieldDef.fieldSet || fieldSet,
-                    fieldDef.fieldOptions)}}`;
+                case "Node": return `${fieldDef.name}{${fieldDef.nodeFields||this._getFields(fieldDef.typeName, fieldDef.fieldSet || fieldSet, fieldDef.fieldOptions)}}`;
                 case "Connection": return `${fieldDef.name}{pageInfo{hasNextPage endCursor}edges{node{${fieldDef.nodeFields||"id"}}}}`;
                 default: return fieldDef.name;
             }
@@ -565,25 +557,30 @@ endCursor}edges{node{${nodeFields}}}}}}`;
      */
     async addUserToGroup(groupId, userId) {
         let userIds = ( Array.isArray(userId) ? userId : [userId]);
-        const groupQuery = "mutation AddUserToGroup($groupId:ID!,$userIds:[ID]){groupUpdate(id:$groupId,addedUserIds:$userIds){ok error}}";
+        const groupQuery = "mutation AddUserToGroup($groupId:ID!,$userIds:[ID]){groupUpdate(id:$groupId,addedUserIds:$userIds){error entity{id name users{edges{node{id email}}}}}}";
         let groupsResponse = await this.exec(groupQuery, {groupId, userIds} );
-        return groupsResponse.entity;
+        return groupsResponse.groupUpdate.entity;
     }
 
 
     async addResourceToServiceAccount(serviceAccountId, resourceId) {
         let resourceIds = ( Array.isArray(resourceId) ? resourceId : [resourceId]);
-        const serviceAccountQuery = "mutation AddResourceToServiceAccount($serviceAccountId:ID!,$resourceIds:[ID]){serviceAccountUpdate(id:$serviceAccountId,addedResourceIds:$resourceIds){ok error}}";
+        const serviceAccountQuery = "mutation AddResourceToServiceAccount($serviceAccountId:ID!,$resourceIds:[ID]){serviceAccountUpdate(id:$serviceAccountId,addedResourceIds:$resourceIds){error entity{id name resources{edges{node{id name}}}}}}";
         let serviceAccountResponse = await this.exec(serviceAccountQuery, {serviceAccountId, resourceIds} );
-        return serviceAccountResponse.entity;
+        return serviceAccountResponse.serviceAccountUpdate.entity;
     }
 
     async addGroupToResource(resourceId, groupIds){
-        const addGrouptoResourceQuery = "mutation AddGroupToResource($resourceId:ID!,$groupIds:[ID]){resourceUpdate(id:$resourceId,addedGroupIds:$groupIds){ok error}}";
-        let groupsResponse = await this.exec(addGrouptoResourceQuery, {resourceId, groupIds} );
-        return groupsResponse.entity;
+        const addGrouptoResourceQuery = "mutation AddGroupToResource($resourceId:ID!,$groupIds:[ID]){resourceUpdate(id:$resourceId,addedGroupIds:$groupIds){error entity{id name groups{edges{node{id name}}}}}}";
+        let resourceResponse = await this.exec(addGrouptoResourceQuery, {resourceId, groupIds} );
+        return resourceResponse.resourceUpdate.entity;
     }
 
+    async addResourceToGroup(groupId, resourceIds){
+        const addResourceToGroupQuery = "mutation AddResourceToGroup($groupId:ID!,$resourceIds:[ID]){groupUpdate(id:$groupId,addedResourceIds:$resourceIds){error entity{id name resources{edges{node{id name}}}}}}";
+        let groupsResponse = await this.exec(addResourceToGroupQuery, {groupId, resourceIds} );
+        return groupsResponse.groupUpdate.entity;
+    }
 
     /**
      * Removes a userId or list of userIds from a Group
@@ -668,6 +665,15 @@ endCursor}edges{node{${nodeFields}}}}}}`;
         return result.edges[0].node.id;
     }
 
+    // todo: waiting on feature request
+    async lookupUserByEmail(email) {
+        const query = "query UserByEmail($email:String){users(filter:{email:{eq:$email}}){edges{node{id}}}}";
+        let response = await this.exec(query, {email: ""+email.trim()});
+        let result = response.users;
+        if ( result == null || result.edges == null || result.edges.length < 1 ) return null;
+        return result.edges[0].node.id;
+    }
+
     async lookupResourceByName(name) {
         const query = "query ResourceByName($name:String){resources(filter:{name:{eq:$name}}){edges{node{id}}}}";
         let response = await this.exec(query, {name: ""+name.trim()});
@@ -685,8 +691,8 @@ endCursor}edges{node{${nodeFields}}}}}}`;
     }
 
 
-    async createGroup(name, resourceIds, userIds) {
-        const createGroupQuery = "mutation CreateGroup($name:String!,$resourceIds:[ID],$userIds:[ID]){result:groupCreate(name:$name,resourceIds:$resourceIds,userIds:$userIds){error entity{id}}}";
+    async createGroup(name, resourceIds=[], userIds=[]) {
+        const createGroupQuery = "mutation CreateGroup($name:String!,$resourceIds:[ID],$userIds:[ID]){result:groupCreate(name:$name,resourceIds:$resourceIds,userIds:$userIds){error entity{id name users{edges{node{id email}}}}}}";
         let groupsResponse = await this.exec(createGroupQuery, {name, resourceIds, userIds} );
         if ( groupsResponse.result.error !== null ) throw new Error(`Error creating group: '${groupsResponse.result.error}'`)
         return groupsResponse.result.entity;
@@ -699,8 +705,8 @@ endCursor}edges{node{${nodeFields}}}}}}`;
         return createRemoteNetworkResponse.result.entity;
     }
 
-    async createServiceAccount(name, resourceIds) {
-        const createServiceAccountQuery = "mutation CreateServiceAccount($name:String!,$resourceIds:[ID]){result:serviceAccountCreate(name:$name,resourceIds:$resourceIds){error entity{id}}}";
+    async createServiceAccount(name, resourceIds=[]) {
+        const createServiceAccountQuery = "mutation CreateServiceAccount($name:String!,$resourceIds:[ID]){result:serviceAccountCreate(name:$name,resourceIds:$resourceIds){error entity{id name resources{edges{node{id name}}}}}}";
         let serviceAccountResponse = await this.exec(createServiceAccountQuery, {name, resourceIds} );
         if ( serviceAccountResponse.result.error !== null ) throw new Error(`Error creating service account: '${serviceAccountResponse.result.error}'`)
         return serviceAccountResponse.result.entity;
@@ -729,7 +735,7 @@ endCursor}edges{node{${nodeFields}}}}}}`;
     }
 
     async createConnector(remoteNetworkId) {
-        const createConnectorQuery = "mutation CreateConnector($remoteNetworkId:ID!){result:connectorCreate(remoteNetworkId:$remoteNetworkId){error entity{id name}}}";
+        const createConnectorQuery = "mutation CreateConnector($remoteNetworkId:ID!){result:connectorCreate(remoteNetworkId:$remoteNetworkId){error entity{id name remoteNetwork{name}}}}";
         let createConnectorResponse = await this.exec(createConnectorQuery, {remoteNetworkId} );
         if ( createConnectorResponse.result.error !== null ) throw new Error(`Error creating connector: '${createConnectorResponse.result.error}'`)
         return createConnectorResponse.result.entity;
@@ -750,8 +756,15 @@ endCursor}edges{node{${nodeFields}}}}}}`;
         return response.result.connectorTokens;
     }
 
+    async serviceAccountKeyCreate(serviceAccountId, name, expirationTime) {
+        const query = "mutation CreateKey($serviceAccountId:ID!, $name:String,$expirationTime:Int!){result:serviceAccountKeyCreate(serviceAccountId:$serviceAccountId,name:$name,expirationTime:$expirationTime){error token entity{id name serviceAccount{id name}}}}";
+        let response = await this.exec(query, {serviceAccountId, name, expirationTime} );
+        if ( response.result.error !== null ) throw new Error(`Error creating service account key: '${response.result.error}'`)
+        return response.result;
+    }
+
     async createResource(name, address, remoteNetworkId, protocols = null, groupIds = []) {
-        const createResourceQuery = "mutation CreateResource($name:String!,$address:String!,$remoteNetworkId:ID!,$protocols:ProtocolsInput,$groupIds:[ID]){result:resourceCreate(address:$address,groupIds:$groupIds,name:$name,protocols:$protocols,remoteNetworkId:$remoteNetworkId){error entity{id name remoteNetwork{name}}}}";
+        const createResourceQuery = "mutation CreateResource($name:String!,$address:String!,$remoteNetworkId:ID!,$protocols:ProtocolsInput,$groupIds:[ID]){result:resourceCreate(address:$address,groupIds:$groupIds,name:$name,protocols:$protocols,remoteNetworkId:$remoteNetworkId){error entity{id name remoteNetwork{name} groups{edges{node{id name}}}}}}";
         let createResourceResponse = await this.exec(createResourceQuery, {name, address, remoteNetworkId, protocols, groupIds} );
         if ( createResourceResponse.result.error !== null ) throw new Error(`Error creating resource: '${createResourceResponse.result.error}'`)
         return createResourceResponse.result.entity;
@@ -792,8 +805,7 @@ endCursor}edges{node{${nodeFields}}}}}}`;
     async setDeviceTrustBulk(devices, idFieldFn = (d) => d.id, isTrustedFieldFn = (d) => d.isTrusted) {
         if ( !Array.isArray(devices)  ) throw new Error(`setDeviceTrustBulk requires an array as input.`);
         if ( devices.length === 0 ) return [];
-        if ( !devices.every( device => typeof device.id === "string" && typeof device.isTrusted === "boolean" ) ) throw new Error(`setDeviceTrustBulk requires 
-every item to have an 'id' (string) and 'isTrusted' (boolean) value`);
+        if ( !devices.every( device => typeof device.id === "string" && typeof device.isTrusted === "boolean" ) ) throw new Error(`setDeviceTrustBulk requires every item to have an 'id' (string) and 'isTrusted' (boolean) value`);
 
         const gqlParams = devices.map( (_, i) => `$id${i}:ID!,$isTrusted${i}:Boolean!`).join(",");
         const gqlMutationParts = devices.map( (_, i) => `result${i}:deviceUpdate(id:$id${i},isTrusted:$isTrusted${i}){ok error entity{id isTrusted}}`).join(" ");
@@ -812,8 +824,7 @@ every item to have an 'id' (string) and 'isTrusted' (boolean) value`);
     async removeGroupsBulk(ids) {
         if ( !Array.isArray(ids)  ) throw new Error(`removeGroupsBulk requires an array as input.`);
         if ( ids.length === 0 ) return [];
-        if ( !ids.every( id => typeof id === "string" && id.startsWith(TwingateApiClient.IdPrefixes.Group) ) ) throw new Error(`removeGroupsBulk requires every 
-value to be a Group Id`);
+        if ( !ids.every( id => typeof id === "string" && id.startsWith(TwingateApiClient.IdPrefixes.Group) ) ) throw new Error(`removeGroupsBulk requires every value to be a Group Id`);
         for ( let x = 0; x < ids.length; x++ ) {
             try {
                 await this.removeGroup(ids[x]);
@@ -846,8 +857,7 @@ value to be a Group Id`);
      * @returns {boolean} -
      */
     static async testNetworkValid(networkName) {
-        let url = ( networkName.indexOf('.') === -1 ) ? `https://${networkName}.twingate.com/api/graphql/?testNetworkValid` :
-            `https://${networkName}/api/graphql/?testNetworkValid`;
+        let url = ( networkName.indexOf('.') === -1 ) ? `https://${networkName}.twingate.com/api/graphql/?testNetworkValid` : `https://${networkName}/api/graphql/?testNetworkValid`;
         let rsp = await fetch(url);
         return rsp.status !== 404;
     }
@@ -858,100 +868,11 @@ value to be a Group Id`);
     static async testApiKeyValid(networkName, apiKey) {
         // Assuming network is valid, an invalid API key should return a 401. Otherwise we can expect probably a 400
         // since we provide no query on this request
-        let url = ( networkName.indexOf('.') === -1 ) ? `https://${networkName}.twingate.com/api/graphql/?testApiKeyValid` :
-            `https://${networkName}/api/graphql/?testApiKeyValid`;
+        let url = ( networkName.indexOf('.') === -1 ) ? `https://${networkName}.twingate.com/api/graphql/?testApiKeyValid` : `https://${networkName}/api/graphql/?testApiKeyValid`;
         let rsp = await fetch(url, {headers: {'X-API-KEY': apiKey}} );
         return rsp.status !== 401;
     }
 }
-
-
-(function preProcessSchema() {
-    try {
-        for ( const [typeName, typeProps] of Object.entries(TwingateApiClient.Schema) ) {
-            typeProps.name = typeName;
-            typeProps.fieldsByName = {};
-            typeProps.fields.reduce((obj, item) => (obj[item.name] = item, obj), typeProps.fieldsByName)
-            typeProps.dateTimeFields = typeProps.fields.filter(f => f.type === "datetime").map(f => f.name);
-            typeProps.enumFields = typeProps.fields.filter(f => f.type === "enum").map(f => f.name);
-            typeProps.connectionFields = typeProps.fields.filter(f => f.type === "Connection").map(f => f.name);
-            typeProps.nodeFields = typeProps.fields.filter(f => f.type === "Node").map(f => f.name);
-            typeProps.objectFields = typeProps.fields.filter(f => f.type === "Object").map(f => f.name);
-            const labelFields = typeProps.fields.filter(f => f.isLabel === true);
-            if (labelFields.length === 1) typeProps.labelField = labelFields[0].name;
-            if (typeProps.isNode === true) {
-                typeProps.fields.unshift({name: "id", type: "string", primaryKey: true});
-                typeProps.queryNodeField = typeProps.queryNodeField || typeName.toLowerCase();
-                typeProps.nodeQueryName = typeProps.nodeQueryName || `Query${typeName}`;
-                typeProps.queryConnectionField = typeProps.queryConnectionField || `${typeProps.queryNodeField}s`;
-
-                let labelFieldArr = typeProps.fields.filter(f => f.isLabel);
-                if (labelFieldArr.length === 1) typeProps.labelField = labelFieldArr[0].name;
-                else console.warn(`No label field found for type '${typeName}'!`);
-            }
-        }
-
-        const flattenStatements = (prefix, fieldDef) => {
-            if ( !Array.isArray(prefix) ) prefix = [prefix];
-            let schema = TwingateApiClient.Schema[fieldDef.typeName];
-            let stmts = [];
-            // TODO: handle type.multiple === true
-            for ( let fieldDef of schema.fields ) {
-                let stmt = "";
-                let path = [...prefix, fieldDef.name];
-                let flattenStmtsFn = fieldDef.flattenStatementsFn ? fieldDef.flattenStatementsFn : flattenStatements;
-                switch (fieldDef.type) {
-                    case "Object":
-                        stmts.push(...flattenStmtsFn(path, fieldDef));
-                        break;
-                    default:
-                        let flattenedPropName = path.map( (e, i) => (i === 0 ? e : _capitalise(e) ) );
-                        stmts.push(`obj["${flattenedPropName.join("")}"] = obj.${path.join(".")};`);
-                        break;
-                }
-            }
-            return stmts;
-        };
-
-        for ( const [typeName, typeProps] of Object.entries(TwingateApiClient.Schema) ) {
-            let mappingFnStatements = [`opts = opts || {mapDateFields: true};`];
-            mappingFnStatements.push(`if ( opts.mapEnumToDisplay === true ) {`);
-            mappingFnStatements.push(...typeProps.enumFields.map(f=>`    if ( obj["${f}"] != undefined ) { let vm = 
-${JSON.stringify(typeProps.fieldsByName[f].valueMap)}; obj["${f}"] = vm[obj["${f}"]];}`));
-            mappingFnStatements.push(`}`);
-            mappingFnStatements.push(`if ( opts.mapDateFields === true ) {`);
-            mappingFnStatements.push(...typeProps.dateTimeFields.map(f=>`    if ( obj["${f}"] != undefined ) obj["${f}"] = new Date(obj["${f}"]);`));
-            mappingFnStatements.push(`}`);
-            mappingFnStatements.push(`if ( opts.mapNodeToId === true ) {`);
-            mappingFnStatements.push(...typeProps.nodeFields.map(f=>`    if ( obj["${f}"] != undefined ) obj["${f}Id"] = obj["${f}"].id;`));
-            mappingFnStatements.push(`}`);
-            mappingFnStatements.push(`if ( opts.mapNodeToLabel === true ) {`);
-            mappingFnStatements.push(...typeProps.nodeFields.map(f=>`    if ( obj["${f}"] != undefined ) obj["${f}Label"] = 
-obj["${f}"].${TwingateApiClient.Schema[typeProps.fieldsByName[f].typeName].labelField};`));
-            mappingFnStatements.push(`}`);
-            mappingFnStatements.push(`if ( opts.mapNodeToLabel || opts.mapNodeToId ) {`);
-            mappingFnStatements.push(...typeProps.nodeFields.map(f=>`    delete obj["${f}"];`));
-            mappingFnStatements.push(`}`);
-            mappingFnStatements.push(`if ( opts.flattenObjectFields === true ) {`);
-            for ( const f of typeProps.objectFields ) {
-                mappingFnStatements.push(`    if ( obj["${f}"] !== undefined ) {`);
-                mappingFnStatements.push(...flattenStatements(f, typeProps.fieldsByName[f] ).map(s => `        ${s}`));
-                mappingFnStatements.push(`        delete obj["${f}"];`);
-                mappingFnStatements.push(`    }`);
-
-            }
-            mappingFnStatements.push(`}`);
-
-            mappingFnStatements.push("return obj;");
-            typeProps.recordTransformFn = new Function("obj", "opts={}", mappingFnStatements.join("\r\n"));
-
-
-        }
-    }
-    catch (e) {
-        console.error(`Problem pre-processing schema: ${e.stack}`);
-    }
-})();
 
 
 (function preProcessSchema() {

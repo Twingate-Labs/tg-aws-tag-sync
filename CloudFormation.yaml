@@ -49,10 +49,10 @@ Resources:
                 Action: 'cloudformation:*'
                 Resource: '*'
       ManagedPolicyArns: 
-        - arn:aws:iam::aws:policy/AmazonSSMFullAccess
+        - arn:aws:iam::aws:policy/AmazonSSMReadOnlyAccess
         - arn:aws:iam::aws:policy/ResourceGroupsandTagEditorFullAccess
         - arn:aws:iam::aws:policy/AWSLambdaExecute
-        - arn:aws:iam::aws:policy/CloudWatchFullAccess
+        - arn:aws:iam::aws:policy/CloudWatchLogsFullAccess
       RoleName: TwingateRole  
   LambdaFunction:
     Type: AWS::Lambda::Function
@@ -86,3 +86,10 @@ Resources:
       FunctionName: !Ref LambdaFunction 
       Principal: events.amazonaws.com 
       SourceArn: !GetAtt ClouldWatchEventRule.Arn 
+
+
+
+
+
+
+      https://drive.google.com/u/0/uc?id=1id0d8or4s39kVZ06Z_gbno4DgUuTw7_F&export=download

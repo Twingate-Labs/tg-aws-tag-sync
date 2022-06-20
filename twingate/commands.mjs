@@ -93,7 +93,7 @@ export async function createResourceCommand(networkName, apiKey, remoteNetworkNa
     }
 
 
-    let res = await client.createResource(resourceName, resourceAddress, remoteNetworkId, protocols)
+    let res = await client.createResource(resourceName, resourceAddress, remoteNetworkId, protocols, [])
     console.log(`added resources: {remote network: ${remoteNetworkNameOrId}, resource name: ${resourceName}, resource address: ${resourceAddress}, resource id: ${res.id}}`)
 
     return res

@@ -28,7 +28,7 @@
       "twingate_test1": "test1_value",
       "twingate_group": "group_value",
       "twingate_resource": "resource_value",
-      "tg_resource": "123,tg_resource_name_abc,tg_resource_address_4",
+      "tg_resource": "locallambdatest,tg_resource_name_abc3,tg_resource_address_4",
       "tg_groups": "test1,test2",
       "Name": "Debian Package Build 3"
     }
