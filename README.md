@@ -19,13 +19,29 @@ Download the latest ```Cloudformation.yaml``` and ```TgAwsTagWatchLmabda.zip``` 
   - TwingateApiKey: The Twingate API key
   - TwingateNetworkAddress: The Twingate network address, e.g. exampleAccount.twingate.com
 
+  
 ## How To Use
 Tag an AWS resource with the following tags
 
-| Tag         | Input Format                                       | Twingate Action                                   | AWS Action                                    |
-|-------------|----------------------------------------------------|---------------------------------------------------|-----------------------------------------------|
-| tg_resource | RemoteNetworkNameOrId,ResourceName,ResourceAddress | Create the resource in the Twingate               | adding tg_resource_id to the AWS resource tag |
-| tg_groups   | GroupNameOrId1,GroupNameOrId2...                   | Add the defined groups into the Twingate resource | None                                          |
+| Tag                       | Input Format                                         | Twingate Action                                   | AWS Action                                             |
+|---------------------------|------------------------------------------------------|---------------------------------------------------|--------------------------------------------------------|
+| **ADD** tg_resource       | RemoteNetworkNameOrId++ResourceName++ResourceAddress | Create the resource in the Twingate               | adding tg_resource_id to the AWS resource tag          |
+| **ADD** tg_groups         | GroupNameOrId1++GroupNameOrId2++GroupNameOrId3...    | Add the defined groups into the Twingate resource | None                                                   |
+| **REMOVE** tg_resource_id | None                                                 | Remove the resource in the Twingate               | Remove tg_groups and tg_resource from AWS resource tag |
+
+**Supported AWS Resources**
+The project should work against all ec2, ecs and rds services, below are list of tested services:
+- EC2 
+  - Instance
+- ECS
+  - Cluster (Issue with duplicate resource)
+  - Service
+  - Task
+  - Instance (To Be Tested)
+  - 
+- RDS
+  - Cluster
+  - Instance
 
 ## Remove the Corresponding Twingate Resource
 Remove the AWS tag 'tg_resource_id' From the AWS Instance.
