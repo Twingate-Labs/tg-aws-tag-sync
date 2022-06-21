@@ -15,7 +15,7 @@ export async function eventProcessor(event) {
 
     // process tg_resource tag
     if ("tg_resource" in event.detail.tags){
-        let resourceInfo = event.detail.tags.tg_resource.replace(/\s*,\s*/g, "++").split("++")
+        let resourceInfo = event.detail.tags.tg_resource.replace(/\s*\+\+\s*/g, "++").split("++")
         if (resourceInfo.length == 3){
             [remoteNetworkName, resourceNameOrId, resourceAddress] = resourceInfo
         }else {
