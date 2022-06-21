@@ -49,6 +49,10 @@ Resources:
                 Action:
                  - "ec2:DeleteTags"
                  - "ec2:CreateTags"
+                 - "ecs:DeleteTags"
+                 - "ecs:CreateTags"
+                 - "rds:DeleteTags"
+                 - "rds:CreateTags"
                 Resource: '*'
       ManagedPolicyArns: 
         - arn:aws:iam::aws:policy/AmazonSSMReadOnlyAccess
