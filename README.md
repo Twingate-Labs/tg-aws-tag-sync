@@ -30,7 +30,7 @@ Tag an AWS resource with the following tags
 | **REMOVE** tg_resource_id | None                                                 | Remove the resource in the Twingate               | Remove tg_groups and tg_resource from AWS resource tag |
 
 
-**Supported AWS Resources**
+##  Supported AWS Resources
 
 | AWS Resource           | Supported    |
 |------------------------|--------------|
