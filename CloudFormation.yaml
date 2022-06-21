@@ -76,7 +76,7 @@ Resources:
     Type: AWS::Events::Rule
     Properties: 
       Description: Clould Watch Event Rule
-      EventPattern: {"source":["aws.tag"],"detail-type":["Tag Change on Resource"],"detail":{"service":["ec2"],"resource-type":["instance"],"changed-tag-keys":["tg_resource","tg_groups", "tg_resource_id"]}}
+      EventPattern: {"source":["aws.tag"],"detail-type":["Tag Change on Resource"],"detail":{"service":["ec2", "rds", "ecs"],"changed-tag-keys":["tg_resource","tg_groups", "tg_resource_id"]}}
       Name: TwingateTagWatch
       Targets: 
         - Arn: !GetAtt "LambdaFunction.Arn"
