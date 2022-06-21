@@ -29,6 +29,7 @@ Tag an AWS resource with the following tags
 | **ADD** tg_groups         | GroupNameOrId1++GroupNameOrId2++GroupNameOrId3...    | Add the defined groups into the Twingate resource | None                                                   |
 | **REMOVE** tg_resource_id | None                                                 | Remove the resource in the Twingate               | Remove tg_groups and tg_resource from AWS resource tag |
 
+
 **Supported AWS Resources**
 The project should work against all ec2, ecs and rds services, below are list of tested services:
 - EC2 
