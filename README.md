@@ -31,18 +31,14 @@ Tag an AWS resource with the following tags
 
 
 **Supported AWS Resources**
-The project should work against all ec2, ecs and rds services, below are list of tested services:
-- EC2 
-  - Instance
-- ECS
-  - Cluster (Issue with duplicate resource)
-  - Service
-  - Task
-  - Instance (To Be Tested)
-  - 
-- RDS
-  - Cluster
-  - Instance
 
-## Remove the Corresponding Twingate Resource
-Remove the AWS tag 'tg_resource_id' From the AWS Instance.
+| AWS Resource           | Supported    |
+|------------------------|--------------|
+| EC2 Instance           | Yes          |
+| ECS Cluster            | Yes          |
+| ECS Service            | Yes          |
+| ECS Task               | Yes          |
+| ECS Container Instance | Yes          |
+| ECS Instance           | No           |
+| RDS Cluster            | No           |
+| RDS Instance           | Yes          |
