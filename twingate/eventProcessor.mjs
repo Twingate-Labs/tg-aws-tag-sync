@@ -13,7 +13,7 @@ const apiKey =  ssmParameter.Parameters.find(x => x.Name === 'TwingateApiKey').V
 export async function eventProcessor(event) {
     let [remoteNetworkName, resourceNameOrId, resourceAddress, resourceId] = ["", "", "", ""]
 
-    if (event.detail.service=="rds" && event.detail.resource-type=="cluster"){
+    if (event.detail.service=="rds" && event.detail["resource-type"]=="cluster"){
         throw new Error(`RDS cluster is not supported`)
     }
 
