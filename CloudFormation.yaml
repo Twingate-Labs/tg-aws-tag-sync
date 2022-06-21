@@ -76,6 +76,12 @@ Resources:
       Role: !GetAtt "TwingateRole.Arn"
       Runtime: nodejs14.x
       Timeout: 60
+  LambdaAsyncconfig:
+    Type: AWS::Lambda::EventInvokeConfig
+    Properties:
+      FunctionName: !Ref LambdaFunction
+      MaximumRetryAttempts: 0
+      Qualifier: $LATEST
   ClouldWatchEventRule:
     Type: AWS::Events::Rule
     Properties: 
@@ -86,9 +92,9 @@ Resources:
         - Arn: !GetAtt "LambdaFunction.Arn"
           Id: WhatIsThis
   LambdaPermission:
-    Type: AWS::Lambda::Permission 
-    Properties:  
-      Action: lambda:InvokeFunction 
-      FunctionName: !Ref LambdaFunction 
-      Principal: events.amazonaws.com 
+    Type: AWS::Lambda::Permission
+    Properties:
+      Action: lambda:InvokeFunction
+      FunctionName: !Ref LambdaFunction
+      Principal: events.amazonaws.com
       SourceArn: !GetAtt ClouldWatchEventRule.Arn
