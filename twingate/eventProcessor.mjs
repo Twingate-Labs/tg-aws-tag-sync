@@ -50,7 +50,7 @@ export async function eventProcessor(event) {
     if (event.detail["changed-tag-keys"].includes("tg_groups")){
         if ("tg_groups" in event.detail.tags){
             resourceNameOrId =   event.detail.tags.tg_resource_id || resourceId
-            let groupInfo = event.detail.tags.tg_groups.replace(/\s*,\s*/g, ",").split(",")
+            let groupInfo = event.detail.tags.tg_groups.replace(/\s*\+\+\s*/g, "++").split("++")
             let output = await addGroupToResourceCommand(networkAddress, apiKey, resourceNameOrId, groupInfo)
         } else{
             console.log("tg_groups tag is removed, nothing to do.")
