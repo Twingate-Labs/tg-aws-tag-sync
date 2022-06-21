@@ -19,6 +19,7 @@ Download the latest ```Cloudformation.yaml``` and ```TgAwsTagWatchLmabda.zip``` 
   - TwingateApiKey: The Twingate API key
   - TwingateNetworkAddress: The Twingate network address, e.g. exampleAccount.twingate.com
 
+**Note: The CloudFormation stores the Twingate API Key as String in the parameter store.**
   
 ## How To Use
 Tag an AWS resource with the following tags
@@ -42,3 +43,4 @@ Tag an AWS resource with the following tags
 | ECS Instance           | No           |
 | RDS Cluster            | No           |
 | RDS Instance           | Yes          |
+
