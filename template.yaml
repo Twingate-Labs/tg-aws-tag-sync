@@ -17,3 +17,5 @@ Resources:
       Runtime: nodejs14.x
       Architectures:
         - x86_64
+      MemorySize:
+        256

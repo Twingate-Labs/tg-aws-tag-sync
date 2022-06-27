@@ -30,17 +30,23 @@ Tag an AWS resource with the following tags
 | **ADD** tg_groups         | GroupNameOrId1++GroupNameOrId2++GroupNameOrId3...    | Add the defined groups into the Twingate resource | None                                                   |
 | **REMOVE** tg_resource_id | None                                                 | Remove the resource in the Twingate               | Remove tg_groups and tg_resource from AWS resource tag |
 
+Note: ResourceName and ResourceAddress is auto-filled with the AWS resource name and private IP (endpoint instead of the private IP for RDS instance) if they are not provided as part of the ```tg_resource``` tag. For instance, the following ```tg_resource``` tag format can be used to trigger this functionality:
+
+```RemoteNetworkNameOrId++ResourceName```: The Twingate resource is populated with the AWS resource private IP address.
+
+```RemoteNetworkNameOrId```: The Twingate resource name is populated with the AWS resource name and The Twingate resource is populated with the AWS resource private IP address.
+
 
 ##  Supported AWS Resources
 
-| AWS Resource           | Supported    |
-|------------------------|--------------|
-| EC2 Instance           | Yes          |
-| ECS Cluster            | Yes          |
-| ECS Service            | Yes          |
-| ECS Task               | Yes          |
-| ECS Container Instance | Yes          |
-| ECS Instance           | No           |
-| RDS Cluster            | No           |
-| RDS Instance           | Yes          |
+| AWS Resource           | Supported    | Auto Filling Resource Name Or Address |
+|------------------------|--------------|---------------------------------------|
+| EC2 Instance           | Yes          | Yes (In Progress)                     | 
+| ECS Cluster            | Yes          | No                                    |
+| ECS Service            | Yes          | No                                    |
+| ECS Task               | Yes          | Yes (In Progress)                     |
+| ECS Container Instance | Yes          | No                                    |
+| ECS Instance           | No           | No                                    |
+| RDS Cluster            | No           | No                                    |
+| RDS Instance           | Yes          | Yes (In Progress)                     |
 

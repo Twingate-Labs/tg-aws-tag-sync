@@ -11,7 +11,8 @@
   ],
   "detail": {
     "changed-tag-keys": [
-      "tg_resource"
+      "tg_resource",
+      "tg_groups"
     ],
     "service": "ec2",
     "resource-type": "instance",
@@ -27,7 +28,7 @@
       "twingate_test1": "test1_value",
       "twingate_group": "group_value",
       "twingate_resource": "resource_value",
-      "tg_resource": "locallambdatest++tg_resource_name_abc12++tg_resource_address_4",
+      "tg_resource": "locallambdatest++45678g",
       "tg_groups": "test1++test2",
       "Name": "Debian Package Build 3"
     }
