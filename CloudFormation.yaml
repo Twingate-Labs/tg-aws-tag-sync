@@ -13,14 +13,14 @@ Parameters:
     Type: String
     Default: TgAwsTagWatchLambda.zip
 Resources:
-  TwingateAPIKeyParamater:
+  TwingateAPIKeyParameter:
     Type: AWS::SSM::Parameter
     Properties: 
       Description: Twingate API Key
       Name: TwingateApiKey
       Type: String
       Value: !Ref TwingateApiKey
-  TwingateNetworkAddressParamater:
+  TwingateNetworkAddressParameter:
     Type: AWS::SSM::Parameter
     Properties: 
       Description: Twingate Network Address
