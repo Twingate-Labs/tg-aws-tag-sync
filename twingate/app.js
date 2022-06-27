@@ -1,5 +1,4 @@
 exports.handler = async (event) => {
-    const { listCommand, createResourceCommand, removeResourceCommand } = await import('./commands.mjs');
     const { eventProcessor } = await import('./eventProcessor.mjs');
     let evenProcess = await eventProcessor(event)
     const response = {
