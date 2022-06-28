@@ -48,8 +48,6 @@ export async function eventProcessor(event) {
                     throw new Error(`tg_resource tag is in the wrong format, ${event.detail.tags.tg_resource}.`)
             }
         }
-    } else{
-        throw new Error(`tg_resource tag is not found`)
     }
 
 
