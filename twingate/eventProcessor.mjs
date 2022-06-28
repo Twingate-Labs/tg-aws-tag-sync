@@ -69,7 +69,12 @@ export async function eventProcessor(event) {
             const tagClient = new ResourceGroupsTaggingAPIClient()
             const tagCommand = new TagResourcesCommand(tagInput)
             const tagResponse = await tagClient.send(tagCommand)
-            console.log(`Added Tag 'tg_resource_id' to AWS resource '${resourceArn}'`)
+            if (Object.keys(tagResponse.FailedResourcesMap).length==0) {
+                console.log(`Added Tag 'tg_resource_id' to the AWS resource '${resourceArn}'`)
+            } else {
+                console.warn(`Failed to add 'tg_resource_id' to the AWS resource '${resourceArn}'. Responds from AWS: '${JSON.stringify(tagResponse)}'`)
+            }
+
         } else {
             console.log("tg_resource tag is removed, nothing to do.")
         }

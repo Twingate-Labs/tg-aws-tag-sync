@@ -7,6 +7,8 @@
   "author": "Twingate Lab",
   "dependencies": {
     "@aws-sdk/client-ec2": "^3.118.0",
+    "@aws-sdk/client-ecs": "^3.118.1",
+    "@aws-sdk/client-rds": "^3.118.1",
     "@aws-sdk/client-resource-groups-tagging-api": "^3.105.0",
     "@aws-sdk/client-ssm": "^3.105.0",
     "axios": ">=0.21.1",

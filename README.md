@@ -30,11 +30,14 @@ Tag an AWS resource with the following tags
 | **ADD** tg_groups         | GroupNameOrId1++GroupNameOrId2++GroupNameOrId3...    | Add the defined groups into the Twingate resource | None                                                   |
 | **REMOVE** tg_resource_id | None                                                 | Remove the resource in the Twingate               | Remove tg_groups and tg_resource from AWS resource tag |
 
-Note: ResourceName and ResourceAddress is auto-filled with the AWS resource name and private IP (endpoint instead of the private IP for RDS instance) if they are not provided as part of the ```tg_resource``` tag. For instance, the following ```tg_resource``` tag format can be used to trigger this functionality:
+## Resource Name and Address Auto Filling
+ResourceName and ResourceAddress are auto-filled if they are not provided as part of the ```tg_resource``` tag. (i.e. ```RemoteNetworkNameOrId++ResourceName``` or ```RemoteNetworkNameOrId```)
 
-```RemoteNetworkNameOrId++ResourceName```: The Twingate resource is populated with the AWS resource private IP address.
-
-```RemoteNetworkNameOrId```: The Twingate resource name is populated with the AWS resource name and The Twingate resource is populated with the AWS resource private IP address.
+| Resource Type | Auto Fill Method                                                                                                      | 
+|---------------|-----------------------------------------------------------------------------------------------------------------------|
+| EC2 Instance  | ```ResourceAddress``` = instance private IPv4 <br/> ```ResourceName``` = instance name                                |
+| ECS Task      | ```ResourceAddress``` = task private IPv4 <br/> ```ResourceName``` = task group - task definition - task private IPv4 |
+| RDS Instance  |                                                                                                                       |
 
 
 ##  Supported AWS Resources
