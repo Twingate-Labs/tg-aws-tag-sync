@@ -11,15 +11,13 @@
   ],
   "detail": {
     "changed-tag-keys": [
-      "tg_resource_id"
+      "tg_groups"
     ],
     "service": "ecs",
     "resource-type": "task",
     "version-timestamp": "1656423926873",
     "version": 3,
     "tags": {
-      "tg_groups": "test1",
-      "tg_resource": "locallambdatest",
       "aws:ecs:serviceName": "test234",
       "aws:ecs:clusterName": "default"
     }

@@ -13,19 +13,19 @@ const apiKey =  ssmParameter.Parameters.find(x => x.Name === 'TwingateApiKey').V
 
 export async function eventProcessor(event) {
 
-    let [remoteNetworkName, resourceName, resourceAddress, resourceId] = ["", "", "", ""]
+    let [remoteNetworkName, resourceName, resourceAddress, resourceId, resourceInfo] = ["", "", "", ""]
 
     if (event.detail.service=="rds" && event.detail["resource-type"]=="cluster"){
         throw new Error(`RDS cluster is not supported`)
     }
     // if tg_groups tag is added but tg_resource does not exist
-    if (event.detail["changed-tag-keys"].includes("tg_groups") && !("tg_resource" in event.detail.tags) && !(event.detail["changed-tag-keys"].includes("tg_resource"))){
+    if (event.detail["changed-tag-keys"].includes("tg_groups") && ("tg_groups" in event.detail.tags) && !("tg_resource" in event.detail.tags) && !(event.detail["changed-tag-keys"].includes("tg_resource"))){
         throw new Error(`tg_resource tag is not found`)
     }
 
     // process tg_resource tag
     if ("tg_resource" in event.detail.tags){
-        let resourceInfo = event.detail.tags.tg_resource.replace(/\s*\+\+\s*/g, "++").split("++")
+        resourceInfo = event.detail.tags.tg_resource.replace(/\s*\+\+\s*/g, "++").split("++")
         if (resourceInfo.length == 3){
             [remoteNetworkName, resourceName, resourceAddress] = resourceInfo
         } else {
@@ -62,12 +62,24 @@ export async function eventProcessor(event) {
             resourceId = output.id
             //todo: handle multiple resources. create multiple resources and add groups to the resources
             const resourceArn = event.resources
-            const tagInput = {
+            let tagInput = {
                 "ResourceARNList": resourceArn,
                 "Tags": {
                     "tg_resource_id": resourceId,
                 }
             }
+
+            // @todo: this would trigger another event, need another way to improve this
+            // if (resourceInfo.length != 3){
+            //     tagInput = {
+            //         "ResourceARNList": resourceArn,
+            //         "Tags": {
+            //             "tg_resource_id": resourceId,
+            //             "tg_resource": `${remoteNetworkName}++${resourceName}++${resourceAddress}`
+            //         }
+            //     }
+            // }
+
             const tagClient = new ResourceGroupsTaggingAPIClient()
             const tagCommand = new TagResourcesCommand(tagInput)
             const tagResponse = await tagClient.send(tagCommand)
