@@ -1,5 +1,6 @@
 import {EC2Client, DescribeInstancesCommand} from "@aws-sdk/client-ec2"
 import {ECSClient, DescribeTasksCommand} from "@aws-sdk/client-ecs"
+import { RDSClient, DescribeDBInstancesCommand } from "@aws-sdk/client-rds"
 
 export async function getAwsResourceInfo(awsResourceId, awsResouceType, resourceInfoLength) {
     let [instanceName, instanceIp] = ["", ""]
@@ -37,6 +38,14 @@ export async function getAwsResourceInfo(awsResourceId, awsResouceType, resource
             instanceName = `${ecsResponse.tasks[0].group} - ${ecsResponse.tasks[0].taskDefinitionArn.split("/")[ecsResponse.tasks[0].taskDefinitionArn.split("/").length-1]} - ${instanceIp}`
             break
         case "rdsdb":
+            const rdsParams = {
+                DBInstanceIdentifier: awsResourceId
+            }
+            const rdsClient = new RDSClient();
+            const rdsCommand = new DescribeDBInstancesCommand(rdsParams);
+            const rdsResponse = await rdsClient.send(rdsCommand);
+            instanceIp = rdsResponse.DBInstances["0"].Endpoint.Address
+            instanceName = rdsResponse.DBInstances[0].DBName || rdsResponse.DBInstances[0].DBInstanceIdentifier
             break
         default:
             throw new Error(`Auto Filling Twingate resource name and address is not supported for AWS resrouce type '${awsResouceType}'`)

@@ -1,35 +1,24 @@
 {
   "version": "0",
-  "id": "ac651f3e-7cd1-0439-b3ee-dc1ca7d6f32c",
+  "id": "14b9d5e8-ba6e-9257-9524-caaf86413c02",
   "detail-type": "Tag Change on Resource",
   "source": "aws.tag",
   "account": "284996965266",
-  "time": "2022-06-21T10:24:40Z",
+  "time": "2022-06-28T10:50:24Z",
   "region": "eu-west-2",
   "resources": [
-    "arn:aws:ecs:eu-west-2:284996965266:task/default/4ad96a72d63844d4a0e195e596038593"
+    "arn:aws:rds:eu-west-2:284996965266:db:database-2-instance-1"
   ],
   "detail": {
     "changed-tag-keys": [
       "tg_resource",
       "tg_groups"
     ],
-    "service": "ecs",
-    "resource-type": "task",
-    "version-timestamp": "1655807080875",
-    "version": 2,
+    "service": "rds",
+    "resource-type": "db",
+    "version-timestamp": "1656413424202",
+    "version": 7,
     "tags": {
-      "tag test 2": "234",
-      "tag test": "123",
-      "twingate_network": "network_value",
-      "twingate_test": "test_value",
-      "twingate_test5": "test5_value",
-      "twingate_test4": "test4_value",
-      "twingate_test3": "test3_value",
-      "twingate_test2": "test2_value",
-      "twingate_test1": "test1_value",
-      "twingate_group": "group_value",
-      "twingate_resource": "resource_value",
       "tg_resource": "locallambdatest",
       "tg_groups": "test1++test2"
     }
