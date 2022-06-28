@@ -18,6 +18,10 @@ export async function eventProcessor(event) {
     if (event.detail.service=="rds" && event.detail["resource-type"]=="cluster"){
         throw new Error(`RDS cluster is not supported`)
     }
+    // if tg_groups tag is added but tg_resource does not exist
+    if (event.detail["changed-tag-keys"].includes("tg_groups") && !("tg_resource" in event.detail.tags) && !(event.detail["changed-tag-keys"].includes("tg_resource"))){
+        throw new Error(`tg_resource tag is not found`)
+    }
 
     // process tg_resource tag
     if ("tg_resource" in event.detail.tags){
@@ -81,7 +85,7 @@ export async function eventProcessor(event) {
 
     if (event.detail["changed-tag-keys"].includes("tg_groups")){
         if ("tg_groups" in event.detail.tags){
-            resourceName =   event.detail.tags.tg_resource_id || resourceId
+            resourceName = event.detail.tags.tg_resource_id || resourceId || resourceName
             let groupInfo = event.detail.tags.tg_groups.replace(/\s*\+\+\s*/g, "++").split("++")
             let output = await addGroupToResourceCommand(networkAddress, apiKey, resourceName, groupInfo)
         } else{

@@ -1,26 +1,27 @@
 {
   "version": "0",
-  "id": "14b9d5e8-ba6e-9257-9524-caaf86413c02",
+  "id": "fe577a36-093b-44a8-0a2c-3e947afaf197",
   "detail-type": "Tag Change on Resource",
   "source": "aws.tag",
   "account": "284996965266",
-  "time": "2022-06-28T10:50:24Z",
+  "time": "2022-06-28T13:45:26Z",
   "region": "eu-west-2",
   "resources": [
-    "arn:aws:rds:eu-west-2:284996965266:db:database-2-instance-1"
+    "arn:aws:ecs:eu-west-2:284996965266:task/default/09d83e849fe743da96446a17ed4ed254"
   ],
   "detail": {
     "changed-tag-keys": [
-      "tg_resource",
-      "tg_groups"
+      "tg_resource_id"
     ],
-    "service": "rds",
-    "resource-type": "db",
-    "version-timestamp": "1656413424202",
-    "version": 7,
+    "service": "ecs",
+    "resource-type": "task",
+    "version-timestamp": "1656423926873",
+    "version": 3,
     "tags": {
+      "tg_groups": "test1",
       "tg_resource": "locallambdatest",
-      "tg_groups": "test1++test2"
+      "aws:ecs:serviceName": "test234",
+      "aws:ecs:clusterName": "default"
     }
   }
 }
