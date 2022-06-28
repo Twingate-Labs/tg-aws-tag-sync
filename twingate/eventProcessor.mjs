@@ -60,7 +60,6 @@ export async function eventProcessor(event) {
         if ("tg_resource" in event.detail.tags){
             let output = await createResourceCommand(networkAddress, apiKey, remoteNetworkName, resourceName, resourceAddress, null)
             resourceId = output.id
-            resourceName = event.detail.tags.tg_resource_id || resourceId || resourceName
             //todo: handle multiple resources. create multiple resources and add groups to the resources
             const resourceArn = event.resources
             let tagInput = {
@@ -95,6 +94,8 @@ export async function eventProcessor(event) {
         }
 
     }
+
+    resourceName = event.detail.tags.tg_resource_id || resourceId || resourceName
 
     if (event.detail["changed-tag-keys"].includes("tg_groups")){
         if ("tg_groups" in event.detail.tags){
