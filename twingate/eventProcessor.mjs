@@ -60,6 +60,7 @@ export async function eventProcessor(event) {
         if ("tg_resource" in event.detail.tags){
             let output = await createResourceCommand(networkAddress, apiKey, remoteNetworkName, resourceName, resourceAddress, null)
             resourceId = output.id
+            resourceName = event.detail.tags.tg_resource_id || resourceId || resourceName
             //todo: handle multiple resources. create multiple resources and add groups to the resources
             const resourceArn = event.resources
             let tagInput = {
@@ -69,7 +70,7 @@ export async function eventProcessor(event) {
                 }
             }
 
-            // @todo: this would trigger another event, need another way to improve this
+            // @todo: this would trigger another event, need another way to improve this. can check if the resource already exist before create
             // if (resourceInfo.length != 3){
             //     tagInput = {
             //         "ResourceARNList": resourceArn,
@@ -97,7 +98,6 @@ export async function eventProcessor(event) {
 
     if (event.detail["changed-tag-keys"].includes("tg_groups")){
         if ("tg_groups" in event.detail.tags){
-            resourceName = event.detail.tags.tg_resource_id || resourceId || resourceName
             let groupInfo = event.detail.tags.tg_groups.replace(/\s*\+\+\s*/g, "++").split("++")
             let output = await addGroupToResourceCommand(networkAddress, apiKey, resourceName, groupInfo)
         } else{
