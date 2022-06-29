@@ -33,7 +33,7 @@ Tag an AWS resource with the following tags
 
 
 ## Unsupported Actions
-It is highly recommended to not perform any of the unsupported actions as they might cause unexpected behaviours later. 
+It is highly recommended to **not** perform any of the unsupported actions as they might cause unexpected behaviours later. 
 
 | Unsupported Actions       | Immediate Behaviour                                                                                                                                                             |
 |---------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
