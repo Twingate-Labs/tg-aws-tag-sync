@@ -24,20 +24,35 @@ Download the latest ```Cloudformation.yaml``` and ```TgAwsTagWatchLmabda.zip``` 
 ## How To Use
 Tag an AWS resource with the following tags
 
-| Tag                       | Input Format                                                                                                                                                                                                     | Twingate Action                                   | AWS Action                                             |
-|---------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|---------------------------------------------------|--------------------------------------------------------|
-| **ADD** tg_resource       | RemoteNetworkNameOrId++ResourceName++ResourceAddress <br/> RemoteNetworkNameOrId++ResourceName (Auto Filling Resource Address)<br/> RemoteNetworkNameOrId(Auto Filling  Resource Name and Resource Address)<br/> | Create the resource in the Twingate               | adding tg_resource_id to the AWS resource tag          |
-| **ADD** tg_groups         | GroupNameOrId1++GroupNameOrId2++GroupNameOrId3...                                                                                                                                                                | Add the defined groups into the Twingate resource | None                                                   |
-| **REMOVE** tg_resource_id | None                                                                                                                                                                                                             | Remove the resource in the Twingate               | Remove tg_groups and tg_resource from AWS resource tag |
+| Supported Actions           | Input Format                                                                                                                                                                                                     | Twingate Action                                                                                      | AWS Action                                             |
+|-----------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|------------------------------------------------------------------------------------------------------|--------------------------------------------------------|
+| **ADD** tg_resource         | RemoteNetworkNameOrId++ResourceName++ResourceAddress <br/> RemoteNetworkNameOrId++ResourceName (Auto Filling Resource Address)<br/> RemoteNetworkNameOrId(Auto Filling  Resource Name and Resource Address)<br/> | Create the resource in the Twingate (the defined remote network need to exist in the Twingate)       | adding tg_resource_id to the AWS resource tag          |
+| **ADD** tg_groups           | GroupNameOrId1++GroupNameOrId2++GroupNameOrId3...                                                                                                                                                                | Add the defined groups into the Twingate resource                                                    | None                                                   |
+| **REMOVE** tg_resource_id   | None                                                                                                                                                                                                             | Remove the resource in the Twingate                                                                  | Remove tg_groups and tg_resource from AWS resource tag |
+| **MODIFY** tg_groups        | ModifedGroupNameOrId1++ModifedGroupNameOrId2++ModifedGroupNameOrId3...                                                                                                                                           | Add the new groups to the resource in Twingate<br/> No groups are removed from the Twingate Resource | None                                                   |
+
+
+## Unsupported Actions
+It is highly recommended to not perform any of the unsupported actions as they might cause unexpected behaviours later. 
+
+| Unsupported Actions       | Immediate Behaviour                                                                                                                                                             |
+|---------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| **ADD** tg_resource_id    | None                                                                                                                                                                            |
+| **REMOVE** tg_resource    | None                                                                                                                                                                            |
+| **REMOVE** tg_groups      | None                                                                                                                                                                            |
+| **MODIFY** tg_resource    | New resource created with info in tg_resource tag<br/> New tg_resource_id tag value is assigned <br/> The Twingate resource base on previous tg_resource tag is **not** removed |
+| **MODIFY** tg_resource_id | None                                                                                                                                                                            |
+
+
 
 ## Resource Name and Address Auto Filling
 ResourceName and ResourceAddress are auto-filled if they are not provided as part of the ```tg_resource``` tag. (i.e. ```RemoteNetworkNameOrId++ResourceName``` or ```RemoteNetworkNameOrId```)
 
-| Resource Type | Auto Fill Method                                                                                                                              | 
-|---------------|-----------------------------------------------------------------------------------------------------------------------------------------------|
+| Resource Type | Auto Fill Method                                                                                                                               | 
+|---------------|------------------------------------------------------------------------------------------------------------------------------------------------|
 | EC2 Instance  | ```ResourceAddress``` = Instance Private IPv4 <br/> ```ResourceName``` = Instance Name (Instance Private IPv4 If Instance Name does not exist) |
-| ECS Task      | ```ResourceAddress``` = Task Private IPv4 <br/> ```ResourceName``` = Task Group - Task Definition - Task Private IPv4                         |
-| RDS Instance  | ```ResourceAddress``` = Instance Endpoint <br/> ```ResourceName``` = DB Name (DB Instance Identifier if DB Name does not exist)               |
+| ECS Task      | ```ResourceAddress``` = Task Private IPv4 <br/> ```ResourceName``` = Task Group - Task Definition - Task Private IPv4                          |
+| RDS Instance  | ```ResourceAddress``` = Instance Endpoint <br/> ```ResourceName``` = DB Name (DB Instance Identifier if DB Name does not exist)                |
 
 
 ##  Supported AWS Resources
