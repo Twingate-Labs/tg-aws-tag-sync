@@ -24,12 +24,14 @@ Download the latest ```Cloudformation.yaml``` and ```TgAwsTagWatchLmabda.zip``` 
 ## How To Use
 Tag an AWS resource with the following tags
 
-| Supported Actions | Input Format                                                                                                                                                                                                      | Twingate Action                                                                                                                  | AWS Action                                             |
-|-------|--------------------------------------------------------|--------------------------------------------------------|--------------------------------------------------------|
-| **ADD** <br/>`tg_resource` | RemoteNetworkNameOrId++ResourceName++ResourceAddress <br/> RemoteNetworkNameOrId++ResourceName (Auto Filling Resource Address)<br/> RemoteNetworkNameOrId (Auto Filling  Resource Name and Resource Address)<br/> | Create the resource in the Twingate (the defined remote network need to exist in the Twingate)                                   | adding `tg_resource_id` to the AWS resource tag          |
-| **ADD** <br/>`tg_groups` | GroupNameOrId1++GroupNameOrId2++GroupNameOrId3...                                                                                                                                                                 | Add the defined groups into the Twingate resource (`tg_resource` should exist on the AWS resource before adding `tg_groups` tag) | None                                                   |
-| **REMOVE** <br/>`tg_resource_id` | None                                                                                                                                                                                                              | Remove the resource in the Twingate                                                                                              | Remove `tg_groups` and `tg_resource` from AWS `resource` tag |
-| **MODIFY** <br/>`tg_groups` | ModifedGroupNameOrId1++ModifedGroupNameOrId2++ModifedGroupNameOrId3...                                                                                                                                            | Add the new groups to the resource in Twingate<br/> No groups are removed from the Twingate Resource                             | None                                                   |
+
+
+| Supported Actions                | Input Format                                                                                                                                                                                                | Twingate Action                                                                                                                  | AWS Action                                                   |
+|----------------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|----------------------------------------------------------------------------------------------------------------------------------|--------------------------------------------------------------|
+| **ADD** <br/>`tg_resource`       | `RemoteNetworkNameOrId++ResourceName++ResourceAddress` <br/> `RemoteNetworkNameOrId++ResourceName` (resource address auto-filled)<br/> `RemoteNetworkNameOrId` (resource name and address auto-filled)<br/> | Create the resource in the Twingate (the defined remote network need to exist in the Twingate)                                   | adding `tg_resource_id` to the AWS resource tag              |
+| **ADD** <br/>`tg_groups`         | `GroupNameOrId1++GroupNameOrId2++GroupNameOrId3...`                                                                                                                                                         | Add the defined groups into the Twingate resource (`tg_resource` should exist on the AWS resource before adding `tg_groups` tag) | None                                                         |
+| **REMOVE** <br/>`tg_resource_id` | None                                                                                                                                                                                                        | Remove the resource in the Twingate                                                                                              | Remove `tg_groups` and `tg_resource` from AWS `resource` tag |
+| **MODIFY** <br/>`tg_groups`      | `ModifedGroupNameOrId1++ModifedGroupNameOrId2...`                                                                                                                                                           | Add the new groups to the resource in Twingate<br/> No groups are removed from the Twingate Resource                             | None                                                         |
 
 
 ## Unsupported Actions
@@ -59,14 +61,14 @@ ResourceName and ResourceAddress are auto-filled if they are not provided as par
 
 | AWS Resource           | Supported    | Auto Filling Resource Name Or Address |
 |------------------------|--------------|---------------------------------------|
-| EC2 Instance           | Yes          | Yes (In Progress)                     | 
+| EC2 Instance           | Yes          | Yes                                   | 
 | ECS Cluster            | Yes          | No                                    |
 | ECS Service            | Yes          | No                                    |
-| ECS Task               | Yes          | Yes (In Progress)                     |
+| ECS Task               | Yes          | Yes                                   |
 | ECS Container Instance | Yes          | No                                    |
 | ECS Instance           | No           | No                                    |
 | RDS Cluster            | No           | No                                    |
-| RDS Instance           | Yes          | Yes (In Progress)                     |
+| RDS Instance           | Yes          | Yes                                   |
 
 
 ## CloudFormation.yaml Summary
@@ -75,15 +77,15 @@ TwingateRole is created with the following policies, this role is used for the L
 - arn:aws:iam::aws:policy/ResourceGroupsandTagEditorFullAccess
 - arn:aws:iam::aws:policy/AWSLambdaExecute
 - arn:aws:iam::aws:policy/CloudWatchLogsFullAccess
-- "ec2:DeleteTags"
-- "ec2:CreateTags"
-- "ec2:Describe*"
-- "ecs:TagResource"
-- "ecs:UntagResource"
-- "ecs:Describe*"
-- "rds:AddTagsToResource"
-- "rds:RemoveTagsFromResource"
-- "rds:Describe*"
+- ec2:DeleteTags
+- ec2:CreateTags
+- ec2:Describe*
+- ecs:TagResource
+- ecs:UntagResource
+- ecs:Describe*
+- rds:AddTagsToResource
+- rds:RemoveTagsFromResource
+- rds:Describe*
 
 Noticeable Lambda Configuration:
 
