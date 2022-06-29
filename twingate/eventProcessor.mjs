@@ -20,7 +20,7 @@ export async function eventProcessor(event) {
     }
     // if tg_groups tag is added but tg_resource does not exist
     if (event.detail["changed-tag-keys"].includes("tg_groups") && ("tg_groups" in event.detail.tags) && !("tg_resource" in event.detail.tags) && !(event.detail["changed-tag-keys"].includes("tg_resource"))){
-        throw new Error(`tg_resource tag is not found`)
+        throw new Error(`tg_resource tag is not found, cannot add groups`)
     }
 
     // process tg_resource tag
@@ -97,6 +97,8 @@ export async function eventProcessor(event) {
 
     resourceName = event.detail.tags.tg_resource_id || resourceId || resourceName
 
+
+
     if (event.detail["changed-tag-keys"].includes("tg_groups")){
         if ("tg_groups" in event.detail.tags){
             let groupInfo = event.detail.tags.tg_groups.replace(/\s*\+\+\s*/g, "++").split("++")
@@ -107,8 +109,12 @@ export async function eventProcessor(event) {
 
     }
 
+
     if (event.detail["changed-tag-keys"].includes("tg_resource_id")){
         if (!("tg_resource_id" in event.detail.tags)){
+            if (!("tg_resource" in event.detail.tags)){
+                throw new Error(`tg_resource tag is not found, can not delete resource from the Twingate`)
+            }
             const resourceArn = event.resources
             const tagInput = {
                 "ResourceARNList": resourceArn,
@@ -117,6 +123,7 @@ export async function eventProcessor(event) {
             const tagClient = new ResourceGroupsTaggingAPIClient()
             const tagCommand = new UntagResourcesCommand(tagInput)
             const tagResponse = await tagClient.send(tagCommand)
+            console.log(`'tg_resource' and 'tg_groups' tags has been removed from the AWS resource ${resourceArn}`)
             let output = await removeResourceCommand(networkAddress, apiKey, resourceName)
         } else{
             console.log("tg_resource_id tag is added or modified, nothing to do.")

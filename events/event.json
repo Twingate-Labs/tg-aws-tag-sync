@@ -11,7 +11,7 @@
   ],
   "detail": {
     "changed-tag-keys": [
-      "tg_groups"
+      "tg_resource_id"
     ],
     "service": "ecs",
     "resource-type": "task",
@@ -19,7 +19,8 @@
     "version": 3,
     "tags": {
       "aws:ecs:serviceName": "test234",
-      "aws:ecs:clusterName": "default"
+      "aws:ecs:clusterName": "default",
+      "tg_resource": "clouformationtest,ecstask,1.1.1.1"
     }
   }
 }
