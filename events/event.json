@@ -1,26 +1,24 @@
 {
   "version": "0",
-  "id": "fe577a36-093b-44a8-0a2c-3e947afaf197",
+  "id": "97834f91-8dad-370d-4630-72db2aae0d44",
   "detail-type": "Tag Change on Resource",
   "source": "aws.tag",
   "account": "284996965266",
-  "time": "2022-06-28T13:45:26Z",
+  "time": "2022-06-29T14:13:46Z",
   "region": "eu-west-2",
   "resources": [
-    "arn:aws:ecs:eu-west-2:284996965266:task/default/09d83e849fe743da96446a17ed4ed254"
+    "arn:aws:rds:eu-west-2:284996965266:db:database-2-instance-1-eu-west-2a"
   ],
   "detail": {
     "changed-tag-keys": [
       "tg_resource_id"
     ],
-    "service": "ecs",
-    "resource-type": "task",
-    "version-timestamp": "1656423926873",
-    "version": 3,
+    "service": "rds",
+    "resource-type": "db",
+    "version-timestamp": "1656512026033",
+    "version": 46,
     "tags": {
-      "aws:ecs:serviceName": "test234",
-      "aws:ecs:clusterName": "default",
-      "tg_resource": "clouformationtest,ecstask,1.1.1.1"
-    }
+      "tg_groups": "test1++test2",
+      "tg_resource": "cloudformationtest2"}
   }
 }
