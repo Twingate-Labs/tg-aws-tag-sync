@@ -1,6 +1,6 @@
 # Twingate Tag CloudWatch
 
-Provides the ability to automatically create Twingate resources and adding group permission to these resources by monitoring the tagging of the AWS resources.
+Provides the ability to automatically create Twingate resources and adding group permission to these resources by monitoring the tag changes of the AWS resources.
 
 
 ## Download The Latest Release
@@ -37,13 +37,13 @@ Tag an AWS resource with the following tags
 ## Unsupported Actions
 It is highly recommended to **not** perform any of the unsupported actions as they might cause unexpected behaviours later. 
 
-| Unsupported Actions       | Immediate Behaviour                                                                                                                                                             |
-|---------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| **ADD** `tg_resource_id`    | None                                                                                                                                                                            |
-| **REMOVE** `tg_resource`    | None                                                                                                                                                                            |
-| **REMOVE** `tg_groups`      | None                                                                                                                                                                            |
+| Unsupported Actions       | Immediate Behaviour                                                                                                                                                                   |
+|---------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| **ADD** `tg_resource_id`    | None                                                                                                                                                                                  |
+| **REMOVE** `tg_resource`    | None                                                                                                                                                                                  |
+| **REMOVE** `tg_groups`      | None                                                                                                                                                                                  |
 | **MODIFY** `tg_resource`    | New resource created with info in `tg_resource` tag<br/> New `tg_resource_id` tag value is assigned <br/> The Twingate resource base on previous `tg_resource` tag is **not** removed |
-| **MODIFY** `tg_resource_id` | None                                                                                                                                                                            |
+| **MODIFY** `tg_resource_id` | EC2 and ECS: None<br/> RDS: The resource from Twingate is deleted                                                                                                                     |
 
 
 
