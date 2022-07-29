@@ -191,11 +191,12 @@ export class TwingateApiClient {
             onApiError: null,
             logger: console,
             silenceApiErrorsWithResults: false,
-            defaultPageSize: 0
+            defaultPageSize: 0,
+            applicationName: `tg-aws-tag-sync/${TwingateApiClient.VERSION}`
         };
 
         const {domain, endpoint, defaultRequestOptions, defaultRequestHeaders, onApiError, logger,
-            silenceApiErrorsWithResults, defaultPageSize} = Object.assign(defaultOpts, opts);
+            silenceApiErrorsWithResults, defaultPageSize, applicationName} = Object.assign(defaultOpts, opts);
 
 
         this.networkName = networkName;
@@ -205,6 +206,7 @@ export class TwingateApiClient {
         this.defaultPageSize = defaultPageSize;
 
         this.defaultRequestOptions = defaultRequestOptions;
+        if ( defaultRequestHeaders["User-Agent"] === undefined ) defaultRequestHeaders["User-Agent"] = applicationName;
         this.defaultRequestHeaders = defaultRequestHeaders;
 
         this.onApiError = onApiError;
@@ -303,7 +305,7 @@ export class TwingateApiClient {
         const firstResults = pageSize>0 ? `first:${pageSize},` : "";
         fieldAlias = (fieldAlias != null && fieldAlias != field) ? `${fieldAlias}:` : "";
         if ( Array.isArray(nodeFields) ) nodeFields = nodeFields.join(" ");
-        return `query ${queryName}($id:ID!,$endCursor:String!){${fieldAlias}${field}(id:$id){${connectionField}(${firstResults}after:$endCursor){pageInfo{hasNextPage endCursor}edges{node{${nodeFields}}}}}}`;
+        return `query ${queryName}($id:ID!,$endCursor:String){${fieldAlias}${field}(id:$id){${connectionField}(${firstResults}after:$endCursor){pageInfo{hasNextPage endCursor}edges{node{${nodeFields}}}}}}`;
     }
 
     /**
@@ -330,8 +332,8 @@ export class TwingateApiClient {
      * @param {int} pageSize - page size to use (default: 0 - server determined)
      * @returns {string} - Query string
      */
-    getTopLevelKVQuery(queryName, field, key, value, fieldAlias="result", pageSize=0) {
-        return this.getRootConnectionPagedQuery(queryName, field, `value:${value} key:${key}`, fieldAlias, pageSize);
+    getTopLevelKVQuery(queryName, field, keyField, valueField, fieldAlias="result", pageSize=0, keyName="key", valueName= "value") {
+        return this.getRootConnectionPagedQuery(queryName, field, `${valueName}:${valueField} ${keyName}:${keyField}`, fieldAlias, pageSize);
     }
 
     /**
@@ -340,7 +342,7 @@ export class TwingateApiClient {
      * @param opts - Options - TODO: Documentation
      * @returns {Promise<*>}
      */
-    async fetchAllPages(query, opts) {
+    async fetchAllPages(query, opts = {}) {
         opts = opts || {};
         const getResultObjFn = opts.getResultObjFn || ((response) => response.result);
         const defaultOpts = {
@@ -365,6 +367,42 @@ export class TwingateApiClient {
             result = pageTransformFn(response, rtnVal, recordTransformFn, recordTransformOpts);
             onPageFn(result);
             pageInfo = nextPageFn(response);
+        }
+        return rtnVal;
+    }
+
+
+
+    async fetchAllRootNodePages(query, opts) {
+        opts = opts || {};
+        const getResultObjFn = opts.getResultObjFn || ((response) => response.result);
+        const defaultOpts = {
+            initialValue: [],
+            recordTransformFn: (node, opts) => node,
+            pageTransformFn: (response, rtnVal, recordTransformFn, recordTransformOpts) => {
+                let r = getResultObjFn(response).edges.map(t => recordTransformFn(t.node, recordTransformOpts) );
+                if ( Array.isArray(rtnVal) ) rtnVal.push(...r);
+                return r;
+            },
+            nextPageFn: (response) => getResultObjFn(response).pageInfo,
+            onPageFn: (result) => result,
+            pageInfo: {hasNextPage: true, endCursor: null},
+            recordTransformOpts: {},
+            id: undefined
+        };
+        let {initialValue, recordTransformFn, pageTransformFn, nextPageFn, onPageFn, pageInfo, recordTransformOpts, id} = Object.assign(defaultOpts, opts);
+        let rtnVal = initialValue;
+        let response, result = null;
+        let objectKey = ""
+        while (pageInfo.hasNextPage === true) {
+            response = await this.exec(query, {id, endCursor: pageInfo.endCursor});
+            if (Object.keys(response.result).length != 1){
+                throw new Error("Number of Connection Fields Cannot Be More Than 1.")
+            }
+            objectKey = Object.keys(response.result)[0]
+            result = pageTransformFn({"result": response.result[objectKey]}, rtnVal, recordTransformFn, recordTransformOpts);
+            onPageFn(result);
+            pageInfo = nextPageFn({"result": response.result[objectKey]});
         }
         return rtnVal;
     }
@@ -590,10 +628,38 @@ export class TwingateApiClient {
      */
     async removeUserFromGroup(groupId, userId) {
         let userIds = ( Array.isArray(userId) ? userId : [userId]);
-        const groupQuery = "mutation RemoveUserFromGroup($groupId:ID!,$userIds:[ID]){groupUpdate(id:$groupId,removedUserIds:$userIds){ok error}}";
+        const groupQuery = "mutation RemoveUserFromGroup($groupId:ID!,$userIds:[ID]){groupUpdate(id:$groupId,removedUserIds:$userIds){error entity{id name users{edges{node{id email}}}}}}";
         let groupsResponse = await this.exec(groupQuery, {groupId, userIds} );
-        return groupsResponse.entity;
+        return groupsResponse.groupUpdate.entity;
     }
+
+
+    /**
+     * Removes a groupId or list of groupIds from a Group
+     * @param {string} resourceId - Twingate Resource Id
+     * @param {string|string[]} groupId - groupId or groupIds to remove
+     * @returns {Promise<*>} - GraphQL entity
+     */
+    async removeGroupFromResource(resourceId, groupId) {
+        let groupIds = ( Array.isArray(groupId) ? groupId : [groupId]);
+        const resourceQuery = "mutation RemoveGroupFromResource($resourceId:ID!,$groupIds:[ID]){resourceUpdate(id:$resourceId,removedGroupIds:$groupIds){error entity{id name groups{edges{node{id name}}}}}}";
+        let resourcesResponse = await this.exec(resourceQuery, {resourceId, groupIds} );
+        return resourcesResponse.resourceUpdate.entity;
+    }
+
+    /**
+     * Removes a groupId or list of groupIds from a Group
+     * @param {string} resourceId - Twingate Resource Id
+     * @param {string|string[]} groupId - groupId or groupIds to remove
+     * @returns {Promise<*>} - GraphQL entity
+     */
+    async removeResourceFromGroup(groupId, resourceId) {
+        let resourceIds = ( Array.isArray(resourceId) ? resourceId : [resourceId]);
+        const groupQuery = "mutation RemoveResourceFromGroup($groupId:ID!,$resourceIds:[ID]){groupUpdate(id:$groupId,removedResourceIds:$resourceIds){error entity{id name resources{edges{node{id name}}}}}}";
+        let groupResponse = await this.exec(groupQuery, {groupId, resourceIds} );
+        return groupResponse.groupUpdate.entity;
+    }
+
 
 
     /**
@@ -764,7 +830,7 @@ export class TwingateApiClient {
     }
 
     async createResource(name, address, remoteNetworkId, protocols = null, groupIds = []) {
-        const createResourceQuery = "mutation CreateResource($name:String!,$address:String!,$remoteNetworkId:ID!,$protocols:ProtocolsInput,$groupIds:[ID]){result:resourceCreate(address:$address,groupIds:$groupIds,name:$name,protocols:$protocols,remoteNetworkId:$remoteNetworkId){error entity{id name remoteNetwork{name} groups{edges{node{id name}}}}}}";
+        const createResourceQuery = "mutation CreateResource($name:String!,$address:String!,$remoteNetworkId:ID!,$protocols:ProtocolsInput,$groupIds:[ID]){result:resourceCreate(address:$address,groupIds:$groupIds,name:$name,protocols:$protocols,remoteNetworkId:$remoteNetworkId){error entity{id name address{value} remoteNetwork{name} groups{edges{node{id name}}}}}}";
         let createResourceResponse = await this.exec(createResourceQuery, {name, address, remoteNetworkId, protocols, groupIds} );
         if ( createResourceResponse.result.error !== null ) throw new Error(`Error creating resource: '${createResourceResponse.result.error}'`)
         return createResourceResponse.result.entity;
@@ -896,7 +962,7 @@ export class TwingateApiClient {
 
                 let labelFieldArr = typeProps.fields.filter(f => f.isLabel);
                 if (labelFieldArr.length === 1) typeProps.labelField = labelFieldArr[0].name;
-                else this.logger.warn(`No label field found for type '${typeName}'!`);
+                else console.warn(`No label field found for type '${typeName}'!`);
             }
         }
 
