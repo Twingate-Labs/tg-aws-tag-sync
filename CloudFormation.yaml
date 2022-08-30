@@ -62,7 +62,7 @@ Resources:
         - arn:aws:iam::aws:policy/ResourceGroupsandTagEditorFullAccess
         - arn:aws:iam::aws:policy/AWSLambdaExecute
         - arn:aws:iam::aws:policy/CloudWatchLogsFullAccess
-      RoleName: TwingateRole
+      RoleName: !Join ["-", ["TwingateRole", !Ref "AWS::Region"]]
   LambdaFunction:
     Type: AWS::Lambda::Function
     Properties: 
