@@ -6,23 +6,17 @@ Parameters:
   TwingateNetworkAddress:
     Type: String
     Default: Insert Twingate Network Address Here
-  S3BucketName:
-    Type: String
-    Default: Insert S3 Bucket Name Here
-  S3LambdaKey:
-    Type: String
-    Default: TgAwsTagWatchLambda.zip
 Resources:
   TwingateAPIKeyParameter:
     Type: AWS::SSM::Parameter
-    Properties: 
+    Properties:
       Description: Twingate API Key
       Name: TwingateApiKey
       Type: String
       Value: !Ref TwingateApiKey
   TwingateNetworkAddressParameter:
     Type: AWS::SSM::Parameter
-    Properties: 
+    Properties:
       Description: Twingate Network Address
       Name: TwingateNetworkAddress
       Type: String
@@ -47,17 +41,17 @@ Resources:
             Statement:
               - Effect: Allow
                 Action:
-                 - "ec2:DeleteTags"
-                 - "ec2:CreateTags"
-                 - "ec2:Describe*"
-                 - "ecs:TagResource"
-                 - "ecs:UntagResource"
-                 - "ecs:Describe*"
-                 - "rds:AddTagsToResource"
-                 - "rds:RemoveTagsFromResource"
-                 - "rds:Describe*"
+                  - "ec2:DeleteTags"
+                  - "ec2:CreateTags"
+                  - "ec2:Describe*"
+                  - "ecs:TagResource"
+                  - "ecs:UntagResource"
+                  - "ecs:Describe*"
+                  - "rds:AddTagsToResource"
+                  - "rds:RemoveTagsFromResource"
+                  - "rds:Describe*"
                 Resource: '*'
-      ManagedPolicyArns: 
+      ManagedPolicyArns:
         - arn:aws:iam::aws:policy/AmazonSSMReadOnlyAccess
         - arn:aws:iam::aws:policy/ResourceGroupsandTagEditorFullAccess
         - arn:aws:iam::aws:policy/AWSLambdaExecute
@@ -65,18 +59,18 @@ Resources:
       RoleName: !Join ["-", ["TwingateRole", !Ref "AWS::Region"]]
   LambdaFunction:
     Type: AWS::Lambda::Function
-    Properties: 
-      Architectures: 
+    Properties:
+      Architectures:
         - x86_64
-      Code: 
-          S3Bucket: !Ref S3BucketName
-          S3Key: !Ref S3LambdaKey
+      Code:
+        ImageUri: public.ecr.aws/p7x5l5b3/aws-tag-sync:latest
       Description: Lambda Function
       FunctionName: TgFunction
       Handler: app.handler
       MemorySize: 256
       PackageType: Zip
       Role: !GetAtt "TwingateRole.Arn"
+      PackageType: image
       Runtime: nodejs14.x
       Timeout: 60
   LambdaAsyncconfig:
@@ -85,13 +79,13 @@ Resources:
       FunctionName: !Ref LambdaFunction
       MaximumRetryAttempts: 0
       Qualifier: $LATEST
-  ClouldWatchEventRule:
+  CloudWatchEventRule:
     Type: AWS::Events::Rule
-    Properties: 
-      Description: Clould Watch Event Rule
+    Properties:
+      Description: Cloud Watch Event Rule
       EventPattern: {"source":["aws.tag"],"detail-type":["Tag Change on Resource"],"detail":{"service":["ec2", "rds", "ecs"],"changed-tag-keys":["tg_resource","tg_groups", "tg_resource_id"]}}
       Name: TwingateTagWatch
-      Targets: 
+      Targets:
         - Arn: !GetAtt "LambdaFunction.Arn"
           Id: WhatIsThis
   LambdaPermission:
@@ -100,4 +94,4 @@ Resources:
       Action: lambda:InvokeFunction
       FunctionName: !Ref LambdaFunction
       Principal: events.amazonaws.com
-      SourceArn: !GetAtt ClouldWatchEventRule.Arn
+      SourceArn: !GetAtt CloudWatchEventRule.Arn
