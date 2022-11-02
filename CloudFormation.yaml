@@ -6,12 +6,6 @@ Parameters:
   TwingateNetworkAddress:
     Type: String
     Default: Insert Twingate Network Address Here
-  S3BucketName:
-    Type: String
-    Default: Insert S3 Bucket Name Here
-  S3LambdaKey:
-    Type: String
-    Default: TgAwsTagWatchLambda.zip
 Resources:
   TwingateAPIKeyParameter:
     Type: AWS::SSM::Parameter
