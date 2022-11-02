@@ -68,9 +68,8 @@ Resources:
       FunctionName: TgFunction
       Handler: app.handler
       MemorySize: 256
-      PackageType: Zip
+      PackageType: Image
       Role: !GetAtt "TwingateRole.Arn"
-      PackageType: image
       Runtime: nodejs14.x
       Timeout: 60
   LambdaAsyncconfig:
