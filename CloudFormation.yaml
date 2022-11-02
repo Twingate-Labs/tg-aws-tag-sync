@@ -68,9 +68,8 @@ Resources:
     Properties: 
       Architectures: 
         - x86_64
-      Code: 
-          S3Bucket: !Ref S3BucketName
-          S3Key: !Ref S3LambdaKey
+      Code:
+        ImageUri: public.ecr.aws/p7x5l5b3/aws-tag-sync:latest
       Description: Lambda Function
       FunctionName: TgFunction
       Handler: app.handler
