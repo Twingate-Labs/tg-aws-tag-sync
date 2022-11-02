@@ -6,6 +6,12 @@ Parameters:
   TwingateNetworkAddress:
     Type: String
     Default: Insert Twingate Network Address Here
+  S3BucketName:
+    Type: String
+    Default: Insert S3 Bucket Name Here
+  S3LambdaKey:
+    Type: String
+    Default: TgAwsTagWatchLambda.zip
 Resources:
   TwingateAPIKeyParameter:
     Type: AWS::SSM::Parameter
@@ -63,7 +69,8 @@ Resources:
       Architectures: 
         - x86_64
       Code:
-        ImageUri: public.ecr.aws/p7x5l5b3/aws-tag-sync:latest
+          S3Bucket: !Ref S3BucketName
+          S3Key: !Ref S3LambdaKey
       Description: Lambda Function
       FunctionName: TgFunction
       Handler: app.handler
