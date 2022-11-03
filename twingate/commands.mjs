@@ -1,4 +1,4 @@
-const { TwingateApiClient } = await import('./TwingateApiClient.mjs');
+import { TwingateApiClient } from './TwingateApiClient.mjs';
 
 // @todo add options
 export async function listCommand(name, networkName, apiKey) {

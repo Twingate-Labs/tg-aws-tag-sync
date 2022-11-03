@@ -1,5 +1,5 @@
 import {getAwsResourceInfo} from "./util.mjs";
-const { listCommand, createResourceCommand, removeResourceCommand, addGroupToResourceCommand } = await import('./commands.mjs');
+import { createResourceCommand, removeResourceCommand, addGroupToResourceCommand } from './commands.mjs';
 import { SSMClient, GetParametersCommand } from "@aws-sdk/client-ssm";
 import {ResourceGroupsTaggingAPIClient, TagResourcesCommand, UntagResourcesCommand} from "@aws-sdk/client-resource-groups-tagging-api";
 

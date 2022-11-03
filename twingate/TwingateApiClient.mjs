@@ -1,4 +1,4 @@
-const fetch = (...args) => import('node-fetch').then(({default: fetch}) => fetch(...args));
+//const fetch = (...args) => import('node-fetch').then(({default: fetch}) => fetch(...args));
 
 
 const _capitalise = (s) => `${s[0].toUpperCase()}${s.slice(1)}`;

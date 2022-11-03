@@ -1,5 +1,7 @@
-exports.handler = async (event) => {
-    const { eventProcessor } = await import('./eventProcessor.mjs');
+import { eventProcessor } from './eventProcessor.mjs';
+
+export async function handler(event) {
+
     let evenProcess = await eventProcessor(event)
     const response = {
         statusCode: 200,
