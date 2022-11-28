@@ -85,10 +85,10 @@ Resources:
       FunctionName: !Ref LambdaFunction
       MaximumRetryAttempts: 0
       Qualifier: $LATEST
-  ClouldWatchEventRule:
+  CloudWatchEventRule:
     Type: AWS::Events::Rule
     Properties: 
-      Description: Clould Watch Event Rule
+      Description: Cloud Watch Event Rule
       EventPattern: {"source":["aws.tag"],"detail-type":["Tag Change on Resource"],"detail":{"service":["ec2", "rds", "ecs"],"changed-tag-keys":["tg_resource","tg_groups", "tg_resource_id"]}}
       Name: TwingateTagWatch
       Targets: 
@@ -100,4 +100,4 @@ Resources:
       Action: lambda:InvokeFunction
       FunctionName: !Ref LambdaFunction
       Principal: events.amazonaws.com
-      SourceArn: !GetAtt ClouldWatchEventRule.Arn
+      SourceArn: !GetAtt CloudWatchEventRule.Arn
