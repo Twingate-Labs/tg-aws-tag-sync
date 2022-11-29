@@ -2,29 +2,28 @@
 
 Provides the ability to automatically create Twingate resources and adding group permission to these resources by monitoring the tag changes of the AWS resources.
 
+# Install Steps
 
-## Download The Latest Release
-Download the latest ```Cloudformation.yaml``` and ```TgAwsTagWatchLmabda.zip``` at [Github Release](https://github.com/Twingate-Labs/tg-aws-tag-sync/releases/latest).
+### AWS Serverless Application Repository
+1. Ensure you have the following pre-requisites:
+   * Twingate Network Address, e.g. example.twingate.com
+   * Twingate API Key, can be generated in the Setting page within the Twingate Admin Console (Read, Write and Provision permission is required)
+2. Click the Install on AWS button below
+   * Select *Deploy*
+   * Select AWS region in *AWS Admin Console*
+   * Input the *TwingateNetworkAddress* and *TwingateApiKey*
+   * Enable *"I acknowledge that this app creates custom IAM roles and resource policies."*
+   * Select *Deploy*
 
-## Upload Lambda Function To AWS S3 Bucket
-- Using an existing AWS S3 bucket or create a new one.
-- Upload ```TgAwsTagWatchLambda.zip``` To the S3 Bucket
 
-## Create New CloudFormation Stack
-- Create a new CloudFormation Stack
-- Using ```Cloudformation.yaml``` as the template
-- Insert the following parameters
-  - S3BucketName: The name of the S3 bucket, e.g. twingateTagWatchBucket
-  - S3LambdaKey: Default value TgAwsTagWatchLmabda.zip unless the filename is changed
-  - TwingateApiKey: The Twingate API key
-  - TwingateNetworkAddress: The Twingate network address, e.g. exampleAccount.twingate.com
+[![Install on AWS](./button_install-on-aws.png)](https://serverlessrepo.aws.amazon.com/applications/eu-west-2/284996965266/tg-aws-tag-sync)
 
-**Note: The API Key is stored as String in the parameter store.**
-  
-## How To Use
+
+### Manual Install Steps
+See [Manual Install Steps](./docs/MANUAL_INSTALL.md)
+
+# How To Use
 Tag an AWS resource with the following tags
-
-
 
 | Supported Actions                | Input Format                                                                                                                                                                                                | Twingate Action                                                                                                                  | AWS Action                                                   |
 |----------------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|----------------------------------------------------------------------------------------------------------------------------------|--------------------------------------------------------------|
@@ -33,8 +32,17 @@ Tag an AWS resource with the following tags
 | **REMOVE** <br/>`tg_resource_id` | None                                                                                                                                                                                                        | Remove the resource in the Twingate                                                                                              | Remove `tg_groups` and `tg_resource` from AWS `resource` tag |
 | **MODIFY** <br/>`tg_groups`      | `ModifedGroupNameOrId1++ModifedGroupNameOrId2...`                                                                                                                                                           | Add the new groups to the resource in Twingate<br/> No groups are removed from the Twingate Resource                             | None                                                         |
 
+### Resource Name and Address Auto Filling
+ResourceName and ResourceAddress are auto-filled if they are not provided as part of the ```tg_resource``` tag. (i.e. ```RemoteNetworkNameOrId++ResourceName``` or ```RemoteNetworkNameOrId```)
 
-## Unsupported Actions
+| Resource Type | Auto Fill Method                                                                                                                               | 
+|---------------|------------------------------------------------------------------------------------------------------------------------------------------------|
+| EC2 Instance  | ```ResourceAddress``` = Instance Private IPv4 <br/> ```ResourceName``` = Instance Name (Instance Private IPv4 If Instance Name does not exist) |
+| ECS Task      | ```ResourceAddress``` = Task Private IPv4 <br/> ```ResourceName``` = Task Group - Task Definition - Task Private IPv4                          |
+| RDS Instance  | ```ResourceAddress``` = Instance Endpoint <br/> ```ResourceName``` = DB Name (DB Instance Identifier if DB Name does not exist)                |
+
+
+### Unsupported Actions
 It is highly recommended to **not** perform any of the unsupported actions as they might cause unexpected behaviours later. 
 
 | Unsupported Actions       | Immediate Behaviour                                                                                                                                                                   |
@@ -47,17 +55,9 @@ It is highly recommended to **not** perform any of the unsupported actions as th
 
 
 
-## Resource Name and Address Auto Filling
-ResourceName and ResourceAddress are auto-filled if they are not provided as part of the ```tg_resource``` tag. (i.e. ```RemoteNetworkNameOrId++ResourceName``` or ```RemoteNetworkNameOrId```)
-
-| Resource Type | Auto Fill Method                                                                                                                               | 
-|---------------|------------------------------------------------------------------------------------------------------------------------------------------------|
-| EC2 Instance  | ```ResourceAddress``` = Instance Private IPv4 <br/> ```ResourceName``` = Instance Name (Instance Private IPv4 If Instance Name does not exist) |
-| ECS Task      | ```ResourceAddress``` = Task Private IPv4 <br/> ```ResourceName``` = Task Group - Task Definition - Task Private IPv4                          |
-| RDS Instance  | ```ResourceAddress``` = Instance Endpoint <br/> ```ResourceName``` = DB Name (DB Instance Identifier if DB Name does not exist)                |
 
 
-##  Supported AWS Resources
+#  Supported AWS Resources
 
 | AWS Resource           | Supported    | Auto Filling Resource Name Or Address |
 |------------------------|--------------|---------------------------------------|
@@ -70,30 +70,7 @@ ResourceName and ResourceAddress are auto-filled if they are not provided as par
 | RDS Cluster            | No           | No                                    |
 | RDS Instance           | Yes          | Yes                                   |
 
+# Configuration Summary
+See [Configuration Summary](./docs/CONFIGURATION_SUMMARY.md)
 
-## CloudFormation.yaml Summary
-TwingateRole is created with the following policies, this role is used for the Lambda execution:
-- arn:aws:iam::aws:policy/AmazonSSMReadOnlyAccess
-- arn:aws:iam::aws:policy/ResourceGroupsandTagEditorFullAccess
-- arn:aws:iam::aws:policy/AWSLambdaExecute
-- arn:aws:iam::aws:policy/CloudWatchLogsFullAccess
-- ec2:DeleteTags
-- ec2:CreateTags
-- ec2:Describe*
-- ecs:TagResource
-- ecs:UntagResource
-- ecs:Describe*
-- rds:AddTagsToResource
-- rds:RemoveTagsFromResource
-- rds:Describe*
-
-Noticeable Lambda Configuration:
-
-| Configuration | Value      |
-|---------------|------------|
-| RAM           | 256MB      |
-| Retry Limit   | 0          |
-| Architectures | x86_64     |
-| Runtime       | nodejs14.x |
-| Timeout       | 60         |
 
