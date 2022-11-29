@@ -111,7 +111,7 @@ export async function removeResourceCommand(networkName, apiKey, resourceNameOrI
 }
 
 
-export async function addGroupToResourceCommand(networkName, apiKey, resourceNameOrId, groupNameOrId){
+export async function addGroupToResourceCommand(networkName, apiKey, resourceNameOrId, groupNameOrIds){
     let client = new TwingateApiClient(networkName, apiKey);
 
     let resourceId = resourceNameOrId
@@ -123,9 +123,10 @@ export async function addGroupToResourceCommand(networkName, apiKey, resourceNam
     }
 
 
-    let groupIds = groupNameOrId
+    let groupIds = groupNameOrIds
     for ( let x = 0; x < groupIds.length; x++ ) {
-        let groupId = groupIds[x]
+        let groupNameOrId = groupIds[x]
+        let groupId = groupNameOrId
         if (!groupId.startsWith(TwingateApiClient.IdPrefixes.Group)) {
             groupId = await client.lookupGroupByName(groupId);
             if (groupId == null) {
