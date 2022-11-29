@@ -15,9 +15,9 @@ Provides the ability to automatically create Twingate resources and adding group
    * Enable *"I acknowledge that this app creates custom IAM roles and resource policies."*
    * Select *Deploy*
 
-
 [![Install on AWS](./button_install-on-aws.png)](https://serverlessrepo.aws.amazon.com/applications/eu-west-2/284996965266/tg-aws-tag-sync)
 
+Note: the application can be deployed in multiple region be repeating the steps above.
 
 ### Manual Install Steps
 See [Manual Install Steps](./docs/MANUAL_INSTALL.md)
