@@ -8,7 +8,6 @@ Parameters:
   TwingateApiKey:
     Type: String
     NoEcho: true
-    Default: Insert Twingate API Key Here
 Resources:
   TwingateAPIKeyParameter:
     Type: AWS::SSM::Parameter
