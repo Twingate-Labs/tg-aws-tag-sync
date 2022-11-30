@@ -3,7 +3,7 @@ Parameters:
   TwingateNetworkAddress:
     Type: String
     AllowedPattern: ^[a-zA-Z0-9]+\.(?:twingate|stg\.opstg)\.com$
-    Default: Insert Twingate Network Address Here, e.g. example.twingate.com
+    Default: acme.twingate.com
   TwingateApiKey:
     Type: String
     NoEcho: true

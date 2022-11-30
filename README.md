@@ -7,7 +7,7 @@ Provides the ability to automatically create Twingate resources and adding group
 ### AWS Serverless Application Repository
 1. Ensure you have the following pre-requisites:
    * The AWS user has the permission to create new IAM roles, Lambda functions and EventWatch rules
-   * Twingate Network Address, e.g. example.twingate.com
+   * Twingate Network Address, e.g. acme.twingate.com
    * Twingate API Key, can be generated in the Setting page within the Twingate Admin Console (Read, Write and Provision permission is required)
 2. Click the ***Install on AWS*** button below
    * Select *Deploy*
