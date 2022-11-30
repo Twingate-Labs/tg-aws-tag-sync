@@ -15,6 +15,8 @@ Provides the ability to automatically create Twingate resources and adding group
    * Input the *TwingateNetworkAddress* and *TwingateApiKey*
    * Enable *"I acknowledge that this app creates custom IAM roles and resource policies."*
    * Select *Deploy*
+   * Click *Deployments* tab -> *View stack events* button -> *Events tab*
+   * Wait until The CloudFormation is created
 
 [![Install on AWS](./button_install-on-aws.png)](https://serverlessrepo.aws.amazon.com/applications/eu-west-2/284996965266/tg-aws-tag-sync)
 

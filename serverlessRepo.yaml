@@ -3,9 +3,11 @@ Transform: AWS::Serverless-2016-10-31
 Parameters:
   TwingateNetworkAddress:
     Type: String
-    Default: Insert Twingate Network Address Here
+    AllowedPattern: ^[a-zA-Z0-9]+\.(?:twingate|stg\.opstg)\.com$
+    Default: Insert Twingate Network Address Here, e.g. example.twingate.com
   TwingateApiKey:
     Type: String
+    NoEcho: true
     Default: Insert Twingate API Key Here
 Resources:
   TwingateAPIKeyParameter:

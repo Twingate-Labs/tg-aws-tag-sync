@@ -1,11 +1,13 @@
 AWSTemplateFormatVersion: 2010-09-09
 Parameters:
-  TwingateApiKey:
-    Type: String
-    Default: Insert Twingate API Key Here
   TwingateNetworkAddress:
     Type: String
-    Default: Insert Twingate Network Address Here
+    AllowedPattern: ^[a-zA-Z0-9]+\.(?:twingate|stg\.opstg)\.com$
+    Default: Insert Twingate Network Address Here, e.g. example.twingate.com
+  TwingateApiKey:
+    Type: String
+    NoEcho: true
+    Default: Insert Twingate API Key Here
   S3BucketName:
     Type: String
     Default: Insert S3 Bucket Name Here
