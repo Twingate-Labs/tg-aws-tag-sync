@@ -2,14 +2,14 @@
 
 Provides the ability to automatically create Twingate resources and adding group permission to these resources by monitoring the tag changes of the AWS resources.
 
-# Install Steps
+# Installation Steps
 
 ### AWS Serverless Application Repository
 1. Ensure you have the following pre-requisites:
    * The AWS user has the permission to create new IAM roles, Lambda functions and EventWatch rules
    * Twingate Network Address, e.g. example.twingate.com
    * Twingate API Key, can be generated in the Setting page within the Twingate Admin Console (Read, Write and Provision permission is required)
-2. Click the Install on AWS button below
+2. Click the ***Install on AWS*** button below
    * Select *Deploy*
    * Select AWS region in *AWS Admin Console*
    * Input the *TwingateNetworkAddress* and *TwingateApiKey*
@@ -20,8 +20,8 @@ Provides the ability to automatically create Twingate resources and adding group
 
 Note: the application can be deployed in multiple region be repeating the steps above.
 
-### Manual Install Steps
-See [Manual Install Steps](./docs/MANUAL_INSTALL.md)
+### Manual Installation Steps
+For manual installation steps, see [Manual Install Steps](./docs/MANUAL_INSTALL.md)
 
 # How To Use
 Tag an AWS resource with the following tags
