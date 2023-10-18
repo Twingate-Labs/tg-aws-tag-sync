@@ -192,7 +192,7 @@ export class TwingateApiClient {
             logger: console,
             silenceApiErrorsWithResults: false,
             defaultPageSize: 0,
-            applicationName: `tg-aws-tag-sync/${TwingateApiClient.VERSION}`
+            applicationName: `Twingate-tg-aws-tag-sync/${TwingateApiClient.VERSION}`
         };
 
         const {domain, endpoint, defaultRequestOptions, defaultRequestHeaders, onApiError, logger,

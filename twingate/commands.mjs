@@ -1,6 +1,7 @@
 const { TwingateApiClient } = await import('./TwingateApiClient.mjs');
 
-// @todo add options
+const applicationName = "Twingate-tg-aws-tag-sync/0.0.1"
+
 export async function listCommand(name, networkName, apiKey) {
     const listCmdConfig = {
         "resource": {
@@ -52,7 +53,9 @@ export async function listCommand(name, networkName, apiKey) {
         }
     }
     let config = listCmdConfig[name];
-    let client = new TwingateApiClient(networkName, apiKey);
+    let client = new TwingateApiClient(networkName, apiKey,{
+        applicationName
+    });
     const configForCli = {
         defaultConnectionFields: "LABEL_FIELD",
         fieldOpts: {
@@ -83,7 +86,9 @@ export async function createRemoteNetworkCommand(networkName, apiKey){
 
 // @todo add options
 export async function createResourceCommand(networkName, apiKey, remoteNetworkNameOrId, resourceName, resourceAddress, protocols) {
-    let client = new TwingateApiClient(networkName, apiKey);
+    let client = new TwingateApiClient(networkName, apiKey, {
+        applicationName
+    });
 
     // Lookup id from name if we need to
     let remoteNetworkId = remoteNetworkNameOrId;
@@ -100,7 +105,9 @@ export async function createResourceCommand(networkName, apiKey, remoteNetworkNa
 }
 
 export async function removeResourceCommand(networkName, apiKey, resourceNameOrId) {
-    let client = new TwingateApiClient(networkName, apiKey);
+    let client = new TwingateApiClient(networkName, apiKey, {
+        applicationName
+    });
     let resourceId = resourceNameOrId
     if (!resourceId.startsWith(TwingateApiClient.IdPrefixes.Resource)){
         resourceId = await client.lookupResourceByName(resourceNameOrId)
@@ -112,7 +119,9 @@ export async function removeResourceCommand(networkName, apiKey, resourceNameOrI
 
 
 export async function addGroupToResourceCommand(networkName, apiKey, resourceNameOrId, groupNameOrIds){
-    let client = new TwingateApiClient(networkName, apiKey);
+    let client = new TwingateApiClient(networkName, apiKey, {
+        applicationName
+    });
 
     let resourceId = resourceNameOrId
     if (!resourceNameOrId.startsWith(TwingateApiClient.IdPrefixes.Resource)) {
