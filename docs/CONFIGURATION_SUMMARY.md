@@ -21,5 +21,5 @@ Noticeable Lambda Configuration:
 | RAM           | 256MB      |
 | Retry Limit   | 0          |
 | Architectures | x86_64     |
-| Runtime       | nodejs14.x |
+| Runtime       | nodejs18.x |
 | Timeout       | 60         |

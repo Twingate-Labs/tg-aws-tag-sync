@@ -79,7 +79,7 @@ Resources:
       MemorySize: 256
       PackageType: Zip
       Role: !GetAtt "TwingateRole.Arn"
-      Runtime: nodejs14.x
+      Runtime: nodejs18.x
       Timeout: 60
   LambdaAsyncconfig:
     Type: AWS::Lambda::EventInvokeConfig
